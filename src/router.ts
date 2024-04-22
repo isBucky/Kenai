@@ -80,7 +80,9 @@ function Router(url: string = '/', options?: RouterOptions) {
  *
  * @param target Classe Router
  */
-Router.getData = function GetData(target: object): RouterStructure | undefined {
+Router.getData = function GetData(
+    target: new (...args: any[]) => any,
+): RouterStructure | undefined {
     return Reflect.getMetadata(Symbols['router'], target);
 };
 

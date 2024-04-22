@@ -12,31 +12,14 @@ import type { FastifyInstance, RouteOptions } from 'fastify';
  * @param options Opções de configuração
  */
 export async function LoadRoutes(options: LoadRoutesOptions) {
-    if ((!options.mainPath || !options.mainPath.length) && !options.mainRoute)
-        throw new Error('You must define at least one of the "mainPath" or "mainRoute" options.');
+    if (!options.mainRoute) throw new Error('You did not define a main route.');
 
-    if (
-        options.mainRoute &&
-        (!isClass(options.mainRoute) || !Reflect.hasMetadata(Symbols['router'], options.mainRoute))
-    )
+    if (!isClass(options.mainRoute) || !Reflect.hasMetadata(Symbols['router'], options.mainRoute))
         throw new Error('The informed main route does not have a signature of our decorators.');
-
-    let mainRoute: any;
-
-    if (options.mainRoute) mainRoute = options.mainRoute;
-    else if (options.mainPath) {
-        const file = NodePath.resolve(options.mainPath);
-
-        try {
-            mainRoute = require(removeTsExtension(file));
-        } catch (error) {
-            throw new Error('The path informed for the routes are invalidated');
-        }
-    }
 
     return await makeRoutes(
         options.app,
-        Router.getData(mainRoute.default ? mainRoute.default : mainRoute),
+        Router.getData(options.mainRoute),
         options.controllerParameters,
     );
 }
@@ -73,13 +56,19 @@ function isClass(route: LoadRoutesOptions['mainRoute']) {
     return typeof route === 'function' && typeof route.prototype !== 'undefined';
 }
 
-function removeTsExtension(path: string) {
-    return path.replace(/.ts/gi, '');
-}
-
 export interface LoadRoutesOptions {
+    /**
+     * Fastify application instance
+     */
     app: FastifyInstance;
-    mainPath?: string;
+
+    /**
+     * Main route of your application
+     */
     mainRoute?: new (...args: any[]) => any;
+
+    /**
+     * This option is used to define the parameters of all routes
+     */
     controllerParameters?: any[];
 }

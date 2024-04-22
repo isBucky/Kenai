@@ -49,8 +49,9 @@ pnpm add kenai
 
 # Primeiros Passos
 
-> Abaixo tem uma exemplificação de como usar os decorators para criar suas rotas, a criação das rotas **é com base na rota principal** e para **toda sub-rota tem que haver uma rota principal**, assim como a rota `/users` deve pertencer a rota `/` (principal) e cada rota pode haver **controladores em pastas separadas** assim como no exemplo [**Clique aqui**](), deste modo **não poluindo seu código** criando varias funções em uma classe da rota.
-> > **Para saber mais sobre esses recursos leia** [`LoadRoutes`](#loadroutes) **e** [`Router`](#router).
+> Abaixo tem uma exemplificação de como usar os decorators para criar suas rotas, a criação das rotas **é com base na rota principal** e para **toda sub-rota tem que haver uma rota principal**, assim como a rota `/users` deve pertencer a rota `/` (principal) e cada rota pode haver **controladores em pastas separadas** assim como no exemplo [**Clique aqui**](https://github.com/isBucky/Kenai/tree/main/examples/several-routes), deste modo **não poluindo seu código** criando varias funções em uma classe da rota.
+> 
+> > **Para saber mais sobre esses recursos leia [LoadRoutes](#loadroutes) e [Router](#router).**
 
 
 ## Exemplo de única rota
@@ -85,6 +86,24 @@ LoadRoutes({
 # LoadRoutes
 
 > Você deve usar essa função para carregar todas as rotas criadas pelos decorators.
+
+**Parâmetros**:
+
+| Nome | Obrigatório | Descrição |
+| ---- | ----------- | --------- |
+| app | Sim | Instancia da aplicação fastify | 
+| mainRoute | Sim | Rota principal da sua aplicação | 
+| controllerParameters | Não | Esta opção é utilizada para definir os parâmetros de todas as rotas | 
+
+**Exemplo**:
+
+```typescript
+LoadRoutes({
+    app: FastifyApp,
+    mainRoute: MainRoute,
+    controllerParameters: ['foo', 'bar']
+});
+```
 
 
 # Router
