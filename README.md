@@ -122,7 +122,7 @@ LoadRoutes({
 
 Use essa rota para criar novas rotas para o Fastify
 
-## Parâmetros
+**Parâmetros:**
 
 **Path:** Caminho que a rota será criada. Não é obrigatório
 
@@ -149,7 +149,7 @@ Use essa rota para criar novas rotas para o Fastify
 }
 ```
 
-## Exemplo
+**Exemplo:**
 
 ```typescript
 @Router('/users', {
@@ -173,7 +173,7 @@ class MyRoute {}
 
 Use essa rota para definir um objeto contendo informações sobre a rota, com isso você pode criar docs personalizadas
 
-## Parâmetros
+**Parâmetros:**
 
 ```typescript
 {
@@ -199,7 +199,7 @@ Use essa rota para definir um objeto contendo informações sobre a rota, com is
 }
 ```
 
-## Exemplo
+**Exemplo:**
 
 ```typescript
 class MyController {
@@ -258,7 +258,7 @@ class MyController {
 
 Use esses decorators para criar um novo caminho para sua rota, os métodos existentes são: **Delete**, **Get**, **Patch**, **Post** e **Put**.
 
-## Parâmetros
+**Parâmetros:**
 
 > **Todos os decorators de métodos possuem os mesmos valores de parâmetros**
 
@@ -294,7 +294,6 @@ Use esses decorators para criar um novo caminho para sua rota, os métodos exist
     validations?: Validation[];
 }
 ```
-
 
 **Exemplo:**
 
