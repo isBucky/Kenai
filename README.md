@@ -49,9 +49,9 @@ pnpm add kenai
 
 # Primeiros Passos
 
-> Abaixo tem uma exemplificação de como usar os decorators para criar suas rotas, a criação das rotas **é com base na rota principal** e para **toda sub-rota tem que haver uma rota principal**, assim como a rota `/users` deve pertencer a rota `/` (principal) e cada rota pode haver **controladores em pastas separadas** assim como no exemplo [**Clique aqui**](https://github.com/isBucky/Kenai/tree/main/examples/several-routes), deste modo **não poluindo seu código** criando varias funções em uma classe da rota.
-> 
-> > **Para saber mais sobre esses recursos leia [LoadRoutes](#loadroutes) e [Router](#router).**
+Abaixo tem uma exemplificação de como usar os decorators para criar suas rotas, a criação das rotas **é com base na rota principal** e para **toda sub-rota tem que haver uma rota principal**, assim como a rota `/users` deve pertencer a rota `/` (principal) e cada rota pode haver **controladores em pastas separadas** assim como no exemplo [**Clique aqui**](https://github.com/isBucky/Kenai/tree/main/examples/several-routes), deste modo **não poluindo seu código** criando varias funções em uma classe da rota.
+
+> **Para saber mais sobre esses recursos leia [LoadRoutes](#loadroutes) e [Router](#router).**
 
 
 ## Exemplo de única rota
@@ -85,7 +85,7 @@ LoadRoutes({
 
 # LoadRoutes
 
-> Você deve usar essa função para carregar todas as rotas criadas pelos decorators.
+Você deve usar essa função para carregar todas as rotas criadas pelos decorators.
 
 ## Parâmetros
 
@@ -120,7 +120,7 @@ LoadRoutes({
 
 # Router
 
-> Use essa rota para criar novas rotas para o Fastify
+Use essa rota para criar novas rotas para o Fastify
 
 ## Parâmetros
 
@@ -128,7 +128,7 @@ LoadRoutes({
 
 **Options:**
 
-> Saiba mais sobre [**Controllers**](#controllers) e [**Validations**](#validations)
+> **Saiba mais sobre [Controllers](#controllers) e [Validations](#validations)**
 
 ```typescript
 {
@@ -171,7 +171,7 @@ class MyRoute {}
 
 # Docs
 
-> Use essa rota para definir um objeto contendo informações sobre a rota, com isso você pode criar docs personalizadas
+Use essa rota para definir um objeto contendo informações sobre a rota, com isso você pode criar docs personalizadas
 
 ## Parâmetros
 
@@ -220,11 +220,11 @@ class MyController {
 
 # Metadata
 
-> Use esse decorator para definir valores de sua preferencia na rota
+Use esse decorator para definir valores de sua preferencia na rota
 
 **Parâmetros:**
 
-O valor do parâmetro pode ser qualquer coisa para ser definida
+> **O valor do parâmetro pode ser qualquer coisa para ser definida**
 
 **Exemplo:**
 
@@ -253,7 +253,6 @@ class MyController {
 
 ```typescript
 ```
-
 
 # Methods
 
