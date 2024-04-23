@@ -11,8 +11,14 @@ import type { FastifyRequest, FastifyReply } from 'fastify';
  * @param url Caminho para criar a rota
  * @param options Opções de configurações da rota
  */
-function Router(url: string = '/', options?: RouterOptions) {
-    if (!url.length) url = '/';
+function Router(pathRouter?: string | RouterOptions, optionsRoute?: RouterOptions) {
+    let url = pathRouter;
+    let options = optionsRoute;
+
+    if (typeof pathRouter !== 'string') {
+        options = url as RouterOptions;
+        url = '/';
+    } else if (!pathRouter.length) pathRouter = '/';
 
     return function <Target extends { new (...args: any[]): {} }>(target: Target) {
         const controllersInRouter: Controller = Reflect.getMetadata(Symbols['controller'], target);
@@ -94,17 +100,17 @@ export interface RouterStructure {
 
 export interface RouterOptions {
     /**
-     * Controladores responsáveis por essa rota
+     * Controllers responsible for this route
      */
     controllers?: (new (...args: any[]) => unknown)[];
 
     /**
-     * Todas as rotas definidas neste Router terá validações definidas automaticamente
+     * All routes defined in this router will have automatically defined validations
      */
     validations?: Validation[];
 
     /**
-     * Outros controladores de rotas
+     * Use to make a list of other routes with the current
      */
     routes?: (new (...args: any[]) => unknown)[];
 }
