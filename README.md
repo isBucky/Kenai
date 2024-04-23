@@ -54,7 +54,7 @@ Abaixo tem uma exemplificação de como usar os decorators para criar suas rotas
 > **Para saber mais sobre esses recursos leia [LoadRoutes](#loadroutes) e [Router](#router).**
 
 
-## Exemplo de única rota
+**Exemplo de única rota:**
 ```typescript
 import { Router, LoadRoutes } from 'kenai';
 import { Get } from 'kenai/methods';
@@ -87,7 +87,7 @@ LoadRoutes({
 
 Você deve usar essa função para carregar todas as rotas criadas pelos decorators.
 
-## Parâmetros
+**Parâmetros:**
 
 ```typescript
 {
@@ -108,7 +108,7 @@ Você deve usar essa função para carregar todas as rotas criadas pelos decorat
 }
 ```
 
-## Exemplo
+**Exemplo:**
 
 ```typescript
 LoadRoutes({
