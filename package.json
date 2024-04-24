@@ -1,6 +1,6 @@
 {
     "name": "kenai",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "Creation and management of Fastify routes using decorators.",
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
@@ -27,7 +27,8 @@
     },
     "scripts": {
         "dev": "rm -rf ./dist && tsc && node --trace-warnings --watch ./dist/test.js",
-        "build": "rm -rf dist && tsc"
+        "build": "rm -rf dist && tsc",
+        "publi": "pnpm build && npm publish"
     },
     "keywords": [],
     "author": "Bucky <bucky.developer@gmail.com>",
