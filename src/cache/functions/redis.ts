@@ -41,7 +41,12 @@ export class Redis {
         const buffer = await this._redis.getBuffer(this._prefix + path);
         if (!buffer) return;
 
-        return JSON.parse(zlib.inflateSync(buffer).toString());
+        const value = zlib.inflateSync(buffer);
+        try {
+            return JSON.parse(value.toString());
+        } catch (error) {
+            return value;
+        }
     }
 
     /**

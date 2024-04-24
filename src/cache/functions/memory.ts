@@ -11,10 +11,15 @@ export class MemoryCache {
      * @param path Path
      */
     static get(path: string): any {
-        const value = this._cache.get('cache/' + path)?.value;
-        if (!value) return;
+        const buffer = this._cache.get('cache/' + path)?.value;
+        if (!buffer) return;
 
-        return JSON.parse(zlib.inflateSync(value).toString());
+        const value = zlib.inflateSync(buffer);
+        try {
+            return JSON.parse(value.toString());
+        } catch (error) {
+            return value;
+        }
     }
 
     /**

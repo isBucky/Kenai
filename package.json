@@ -1,6 +1,6 @@
 {
     "name": "kenai",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "description": "Creation and management of Fastify routes using decorators.",
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
