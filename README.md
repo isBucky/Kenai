@@ -19,8 +19,7 @@
 - [**Extra**](#extra)
     - [**Controllers**](#controllers)
     - [**Validations**](#validations)
-    - [**Criar Decorators Para Métodos**](#)
-    - [**Criar Decorators Para Parâmetros**](#)
+    - [**Create decorators for parameters**](#create-decorators-for-parameters)
 
 
 # Installation
