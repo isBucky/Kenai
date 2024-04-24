@@ -30,6 +30,11 @@ export class Redis {
      * @param path Caminho
      */
     static async get(path: string) {
+        if (!this._redis)
+            throw new Error(
+                'You chose to use Redis as a cache, but did not use the Initialize function.',
+            );
+
         const buffer = await this._redis.getBuffer(this._prefix + path);
         if (!buffer) return;
 
@@ -44,6 +49,11 @@ export class Redis {
      * @param ttl Tempo em segundos para expirar o valor
      */
     static async set(path: string, value: any, ttl: number = 5 * 60) {
+        if (!this._redis)
+            throw new Error(
+                'You chose to use Redis as a cache, but did not use the Initialize function.',
+            );
+
         if (!value) return;
 
         return await this._redis.setex(
@@ -59,6 +69,11 @@ export class Redis {
      * @param path Caminho
      */
     static async delete(path: string) {
+        if (!this._redis)
+            throw new Error(
+                'You chose to use Redis as a cache, but did not use the Initialize function.',
+            );
+
         return await this._redis.del(this._prefix + path).catch(() => null);
     }
 }

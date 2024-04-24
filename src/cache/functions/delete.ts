@@ -2,9 +2,8 @@ import { Symbols } from '../../config/utils';
 
 // Types
 import type { Controller } from '../../functions';
-import type IoRedis from 'ioredis';
 
-export function DeleteCache(cacheIn: 'memory' | IoRedis = 'memory') {
+export function DeleteCache(cacheIn: 'memory' | 'redis' = 'memory') {
     return function (target: object, key: string, descriptor: PropertyDescriptor) {
         const controller: Controller = Reflect.getMetadata(
             Symbols['controller'],

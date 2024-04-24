@@ -4,7 +4,6 @@ import { Redis } from './functions/redis';
 
 // Types
 import type { Controller } from '../functions/';
-import type IoRedis from 'ioredis';
 
 /**
  *

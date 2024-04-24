@@ -224,7 +224,7 @@ Use esse decorator para definir valores de sua preferencia na rota
 
 **Parâmetros:**
 
-> **O valor do parâmetro pode ser qualquer coisa para ser definida**
+O valor do parâmetro pode ser qualquer coisa para ser definida
 
 **Exemplo:**
 
@@ -241,17 +241,86 @@ class MyController {
 
 # Cache
 
->
+Usa esse decorator para criar cache em rotas, com ela o tempo de requisições será muito mais **eficiente** e pode usa-la para **valores estáticos**, ou **valores dinâmicos** com uma expiração.
+
+Com ele você pode usar quando em **memória** ou usando o **banco de dados Redis**, para usar o Redis você dever usar a função [**Initialize**](#cacheinitialize).
+
+> **Os caminhos para a criação dos valores do cache no banco de dados Redis, são com base na url da rota.**
+> 
+> **Em caso de nenhum valor ser retornado, será ignorado.**
 
 **Parâmetros:**
 
-| Nome | Obrigatório | Descrição |
-| ---- | ----------- | --------- |
-|  |  |  | 
+```typescript
+{
+    /**
+     * Defina qual local você quer que salve os dados
+     * 
+     * @default memory
+     */
+    cacheIn: 'memory' | 'redis';
+
+    /**
+     * Defina quanto tempo esse valor vai expirar e torna-se obsoleto
+     */
+    ttl?: number;
+}
+```
 
 **Exemplo:**
 
 ```typescript
+class MyController {
+    @Cache({
+        cacheIn: 'memory',
+        ttl: 120 // 2 minutos
+    })
+    @Get('/user/:id')
+    myHandler() {}
+}
+```
+
+## Cache.delete
+
+Use essa função para uma determinada rota que deleta/atualiza valores, com isso removerá automaticamente os dados salvos em cache, caso tenho alguma rota que salve-os para reutiliza-los, assim atualizando-os toda vez que são mudados.
+
+> **Não necessariamente precisar ser em uma rota que deleta/atualiza, use conforme você acha que os dados devem ser atualizados conforme mudam.**
+
+**Exemplo:**
+
+```typescript
+class MyController {
+    @Cache.Delete('memory') // 'memory' | 'redis'
+    @Put('user/:id')
+    myHandler() {}
+}
+```
+
+## Cache.initialize
+
+Com essa função você pode iniciar uma conexão com o Redis, ou apenas definir o corpo do Redis ja conectado.
+
+> **ELE NÃO É UM DECORATOR. Use essa função antes do servidor ficar online.**
+
+**Exemplo:**
+
+```typescript
+Cache.initialize('redis://user:root@localhost:6379');
+
+// Or
+
+Cache.initialize({
+    username: 'user',
+    password: 'root',
+    host: 'localhost',
+    port: 6379,
+});
+
+// Or
+
+const redis = new Redis('redis://user:root@localhost:6379');
+
+Cache.initialize(redis);
 ```
 
 # Methods
