@@ -115,7 +115,7 @@ LoadRoutes({
 
 # Router
 
-Use essa rota para criar novas rotas para o Fastify.
+Use esse decorator para criar novas rotas no servidor Fastify.
 
 **Parâmetros:**
 
@@ -236,20 +236,20 @@ class MyController {
 
 # Cache
 
-Usa esse decorator para criar cache em rotas, com ela o tempo de requisições será muito mais **eficiente** e pode usa-la para **valores estáticos**, ou **valores dinâmicos** com uma expiração.
+Use esse decorator para criar cache em rotas, com ela o tempo de requisições será mais **eficiente** e pode ser usada para **valores estáticos**, ou **valores dinâmicos** com uma expiração.
 
-Com ele você pode usar quando em **memória** ou usando o **banco de dados Redis**, para usar o Redis você dever usar a função [**Initialize**](#cacheinitialize).
+Com ele você pode armazenar em **memória** ou banco de dados **Redis**, para usar o Redis como cache verifique a função: [**Initialize**](#cacheinitialize).
 
-> **Note** Os caminhos para a criação dos valores do cache no banco de dados Redis, são com base na url da rota.
+> **Note** Os caminhos de criação dos valores no Redis, são com base na URL da rota.
 > 
-> Em caso de nenhum valor ser retornado, será ignorado.
+> Em caso de valor nulo ser retornado, será ignorado.
 
 **Parâmetros:**
 
 ```typescript
 {
     /**
-     * Defina qual local você quer que salve os dados
+     * Defina qual armazenamento deve usar
      * 
      * @default memory
      */
@@ -279,7 +279,7 @@ class MyController {
 
 Use essa função para uma determinada rota que deleta/atualiza valores, com isso removerá automaticamente os dados salvos em cache, caso tenho alguma rota que salve-os para reutiliza-los, assim atualizando-os toda vez que são mudados.
 
-> **Note** Não necessariamente precisar ser em uma rota que deleta/atualiza, use conforme você acha que os dados devem ser atualizados conforme mudam.
+> **Note** Não necessariamente precisar ser uma rota que deleta/atualiza, use conforme você acha que os dados devem ser atualizados conforme mudam.
 
 **Exemplo:**
 
@@ -320,7 +320,9 @@ Cache.initialize(redis);
 
 # Methods
 
-Use esses decorators para criar um novo caminho para sua rota, os métodos existentes são: **Delete**, **Get**, **Patch**, **Post** e **Put**.
+Use esses decorators para criar um novo caminho para sua rota, assim assumindo um papel de [**Controller**](#controllers).
+
+Os métodos existentes são: **Delete**, **Get**, **Patch**, **Post** e **Put**.
 
 **Parâmetros:**
 
@@ -329,14 +331,14 @@ Use esses decorators para criar um novo caminho para sua rota, os métodos exist
 ```typescript
 {
     /**
-     * Use para definir o status da resposta da requisição
+     * Use para definir o status de resposta da requisição
      *
      * @default 200 = OK
      */
     status?: number | keyof typeof Status;
 
     /**
-     * Use para definir o esquema de validação da resposta da requisição
+     * Use para definir um esquema de validação da resposta da requisição usando zod
      */
     replySchema?: {
         /**
@@ -372,101 +374,38 @@ class MyController {
 
 # Params
 
-## Reply
+Os decorators **Reply**, **Body**, **Headers**, **Params**, **Query** e **Request** são responsáveis por trazer valores do corpo da requisição, abaixo terá uma descrição de cada decorator.
 
->
+**Reply**: Obtém o corpo de resposta da requisição.
+
+**Body**: Obtêm o dados enviados nessa requisição.
+
+**Headers**: Obtém o cabeçalho da requisição.
+
+**Params**: Obtém os parâmetros fornecidos na URL da rota.
+
+**Query**: Obtém os valores de uma query informada na URL.
+
+**Request**: Obtém o corpo da requisição
 
 **Parâmetros:**
 
-| Nome | Obrigatório | Descrição |
-| ---- | ----------- | --------- |
-|  |  |  | 
+Você pode usar o parâmetro `key` para obter um valor especifico no corpo da requisição.
+
+```typescript
+Params(key?: string)
+```
 
 **Exemplo:**
 
 ```typescript
+class MyController {
+    @Get('user/:id')
+    myHandler(@Params('id') userId: string) {
+        return userId;
+    }
+}
 ```
-
-
-## Request
-
->
-
-**Parâmetros:**
-
-| Nome | Obrigatório | Descrição |
-| ---- | ----------- | --------- |
-|  |  |  | 
-
-**Exemplo:**
-
-```typescript
-```
-
-
-## Body
-
->
-
-**Parâmetros:**
-
-| Nome | Obrigatório | Descrição |
-| ---- | ----------- | --------- |
-|  |  |  | 
-
-**Exemplo:**
-
-```typescript
-```
-
-
-## Headers
-
->
-
-**Parâmetros:**
-
-| Nome | Obrigatório | Descrição |
-| ---- | ----------- | --------- |
-|  |  |  | 
-
-**Exemplo:**
-
-```typescript
-```
-
-
-## Params
-
->
-
-**Parâmetros:**
-
-| Nome | Obrigatório | Descrição |
-| ---- | ----------- | --------- |
-|  |  |  | 
-
-**Exemplo:**
-
-```typescript
-```
-
-
-## Query
-
->
-
-**Parâmetros:**
-
-| Nome | Obrigatório | Descrição |
-| ---- | ----------- | --------- |
-|  |  |  | 
-
-**Exemplo:**
-
-```typescript
-```
-
 
 # Extra
 

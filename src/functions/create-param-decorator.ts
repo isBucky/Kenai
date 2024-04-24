@@ -1,3 +1,4 @@
+import { resolvePath } from './resolve-path';
 import { Symbols } from '../config/utils';
 
 // Types
@@ -8,7 +9,7 @@ export function createParamDecorator(path: string, key?: string) {
         const controller = Reflect.getMetadata(Symbols['controller'], target.constructor) || {};
         const params = controller[methodName]?.options?.functionParams || [];
 
-        params.unshift(path + (key ? `/${key}` : ''));
+        params.unshift(resolvePath(path + (key ? `/${key}` : '')));
 
         Reflect.defineMetadata(
             Symbols['controller'],
