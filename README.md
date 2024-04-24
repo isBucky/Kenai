@@ -405,14 +405,14 @@ class MyController {
 
 ## Controllers
 
-**Controladores** são funções ou estruturas encarregadas de gerenciar um endpoint da rota. Eles proporcionam uma maneira mais legível e fácil de manipular as rotas, seja criando novos endpoints ou atualizando os existentes.
+**Controllers** are functions or structures responsible for managing a route endpoint. They provide a more readable and easier way to manipulate routes, whether creating new endpoints or updating existing ones.
 
-Para criar controladores em suas rotas, basta utilizar os decoradores [**Methods**](#methods) antes de qualquer outro decorador. Se outros decoradores forem definidos antes dele, não funcionarão, pois é necessário ter a assinatura de controlador.
+To create controllers in your routes, simply use the [**Methods**](#methods) decorators before any other decorator. If other decorators are defined before it, they will not work, as they must have the controller signature.
 
-**Exemplo:**
+**Example:**
 
 ```typescript
-// Maneira correta
+// Correct way
 class MyController {
     @Cache({
         cacheIn: 'memory'
@@ -423,7 +423,7 @@ class MyController {
     }
 }
 
-// Maneira errada
+// Wrong way
 class MyController {
     @Get()
     @Cache({
@@ -435,31 +435,33 @@ class MyController {
 }
 ```
 
-No último exemplo, observe que o decorador `Cache` está abaixo de `Get`. Nessa disposição, ele não funcionará, pois, como mencionado anteriormente, os decoradores que não são [**Methods**](#methods) requerem uma assinatura de controlador, a qual somente os [**Methods**](#methods) possuem e criam.
+In the last example, notice that the `Cache` decorator is below `Get`. In this arrangement, it will not work, because, as mentioned previously, decorators that are not [**Methods**](#methods) require a controller signature, which only [**Methods**](#methods) own and create.
 
 ## Validations
 
-Com as funções de validação, é possível realizar várias verificações nos dados recebidos de uma requisição, tornando a manipulação dos dados retornados segura e simples.
+With the validation functions, it is possible to perform several checks on the data received from a request, making the manipulation of the returned data safe and simple.
 
-As validações podem ser aplicadas aos [**Methods**](#methods), garantindo que o endpoint só seja acessado após verificação. Para cada novo método criado, as validações precisam ser informadas novamente. Se desejar que as validações sejam aplicadas a vários controladores, siga as instruções abaixo.
+Validations can be applied to [**Methods**](#methods), ensuring that the endpoint is only accessed after verification. For each new method created, validations need to be reported again. If you want validations to be applied to multiple controllers, follow the instructions below.
 
-Para tornar as validações "globais" para vários controladores, é possível defini-las nas opções do decorador [**Router**](#router). Dessa forma, todos os controladores definidos nessa rota terão todas as validações especificadas no **Router**.
+To make validations "global" for multiple controllers, you can define them in the [**Router**](#router) decorator options. This way, all controllers defined in this route will have all validations specified in **Router**.
 
-**Como fazer a função de validação:**
+To return an error if the client sent some wrong information, or was not found, you can choose to use the `reply` response function itself, but I advise you to create a custom error for your project and manage validation errors, in **Fastify** `setErrorHandler` event.
+
+**How to do the validation function:**
 
 ```typescript
-// Estrutura de uma função de validação
+// Structure of a validation function
 type Validation = (
     request: any,
     reply: any,
     done: HookHandlerDoneFunction,
 ) => Promise<unknown> | unknown;
 
-// Exemplo de função
+// Function example
 function validation(request, reply, done) { /* ... */ }
 ```
 
-**Exemplo de validação no controlador:**
+**Example of validation in the controller:**
 
 ```typescript
 const users = {
@@ -470,7 +472,9 @@ const users = {
 
 function UserIdIsValid(request, reply, done) {
     if (!('id' in request.params) || isNaN(Number(request.params.id)))
-        return done(new Error('This ID is invalid or does not exist'));
+        return done(new Error('The ID is malformed or incorrect'));
+
+    if (!users[request.params.id]) return done(new Error('This ID is invalid or does not exist'));
 
     return done();
 }
@@ -488,7 +492,7 @@ class MyController {
 }
 ```
 
-**Exemplo de validação no Router:**
+**Example of validation on the Router:**
 
 ```typescript
 @Router({
@@ -498,31 +502,32 @@ class MyController {
 class MyRouter {}
 ```
 
-Dessa forma como exemplificado acima, os controladores `MyController` e `MyControllerTwo` terão a mesma validação de verificar o id do usuário, obtendo dos parâmetros da requisição.
+In this way, as exemplified above, the `MyController` and `MyControllerTwo` controllers will have the same validation of checking the user id, obtaining from the request parameters.
 
-## Criar decorators para parâmetros
+## Create decorators for parameters
 
-Você também pode criar decoradores personalizados paras as rotas, assim simplificando algumas tarefas para a manipulação da requisição.
+You can also create custom decorators for the routes, thus simplifying some tasks for handling the request.
 
-**Parâmetros:**
+**Parameters:**
 
 ```typescript
 createParamDecorator(path: string, key?: string);
 ```
 
-- **Path:** Aqui, você deve definir qual objeto ou dado deseja obter. O caminho para os valores desejados deve ser estruturado dessa maneira, assemelhando-se a um caminho de arquivo: `request/body` ou `request`. Isso é gerenciado graças ao pacote [**Object.mn**](https://github.com/isBucky/Object.mn).
+- **Path:** Here, you must define which object or data you want to obtain. The path to the desired values should be structured this way, resembling a file path: `request/body` or `request`. This is managed thanks to the [**Object.mn**](https://github.com/isBucky/Object.mn) package.
 
-- **Key:** Use a opção **`key`** para obter um valor específico dentro desse objeto. Esta opção é opcional. Abaixo, terá dois exemplos: um decorator com o uso de `key` e outro sem, obtendo apenas o valor inteiro.
+- **Key:** Use the **`key`** option to get a specific value within this object. This option is optional. Below, there will be two examples: a decorator with the use of `key` and another without, obtaining only the integer value.
 
-
-**Exemplo:**
+**Example:**
 
 ```typescript
 import { createParamDecorator } from './';
 
-export const User = (key?: string) => createParamDecorator('request/user', key);
+// Using the "key" parameter
+const User = (key?: string) => createParamDecorator('request/user', key);
 
-export const IP = createParamDecorator('request/ip');
+// Without the "key" parameter
+const IP = createParamDecorator('request/ip');
 
 class MyController {
     @Get()
