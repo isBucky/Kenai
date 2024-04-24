@@ -115,9 +115,13 @@ Use this decorator to create new routes on the Fastify server.
 
 **Parameters:**
 
-- **Path:** Path that the route will be created. It's not mandatory.
+```typescript
+Router(pathRouter?: string | RouterOptions, optionsRoute?: RouterOptions)
+```
 
-- **Options:**
+- **pathRouter:** Path that the route will be created. It's not mandatory.
+
+- **optionsRoute:**
   > **Note** Learn more about [Controllers](#controllers) and [Validations](#validations).
 
     ```typescript
