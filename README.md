@@ -403,6 +403,34 @@ class MyController {
 
 ## Controllers
 
+**Controladores** são funções ou estruturas encarregadas de gerenciar um endpoint da rota. Eles proporcionam uma maneira mais legível e fácil de manipular as rotas, seja criando novos endpoints ou atualizando os existentes.
+
+Para criar controladores em suas rotas, basta utilizar os decoradores [**Methods**](#methods) antes de qualquer outro decorador. Se outros decoradores forem definidos antes dele, não funcionarão, pois é necessário ter a assinatura de controlador.
+
+**Exemplo:**
+
+```typescript
+// Maneira correta
+class MyController {
+    @Cache('memory')
+    @Get()
+    myHandler() {
+        return { message: 'Hello!' }
+    }
+}
+
+// Maneira errada
+class MyController {
+    @Get()
+    @Cache('memory')
+    myHandler() {
+        return { message: 'Hello!' }
+    }
+}
+```
+
+No último exemplo, observe que o decorador `Cache` está abaixo de `Get`. Nessa disposição, ele não funcionará, pois, como mencionado anteriormente, os decoradores que não são [**Methods**](#methods) requerem uma assinatura de controlador, a qual somente os [**Methods**](#methods) possuem e criam.
+
 ## Validations
 
 ## Criar decorators para métodos
