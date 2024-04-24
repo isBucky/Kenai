@@ -115,30 +115,29 @@ Use this decorator to create new routes on the Fastify server.
 
 **Parameters:**
 
-**Path:** Path that the route will be created. It's not mandatory.
+- **Path:** Path that the route will be created. It's not mandatory.
 
-**Options:**
+- **Options:**
+  > **Note** Learn more about [Controllers](#controllers) and [Validations](#validations).
 
-> **Note** Learn more about [Controllers](#controllers) and [Validations](#validations).
-
-```typescript
-{
-    /**
-     * Controllers responsible for this route
-     */
-    controllers?: (new (...args: any[]) => unknown)[];
-
-    /**
-     * All routes defined in this router will have automatically defined validations
-     */
-    validations?: Validation[];
-
-    /**
-     * Use to make a list of other routes with the current
-     */
-    routes?: (new (...args: any[]) => unknown)[];
-}
-```
+    ```typescript
+    {
+        /**
+         * Controllers responsible for this route
+         */
+        controllers?: (new (...args: any[]) => unknown)[];
+    
+        /**
+         * All routes defined in this router will have automatically defined validations
+         */
+        validations?: Validation[];
+    
+        /**
+         * Use to make a list of other routes with the current
+         */
+        routes?: (new (...args: any[]) => unknown)[];
+    }
+    ```
 
 **Example:**
 
