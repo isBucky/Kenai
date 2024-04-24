@@ -45,8 +45,7 @@ Below is an example of how to use decorators to create your routes, the creation
 
 > **Note** To learn more about these features read [LoadRoutes](#loadroutes) and [Router](#router).
 
-
-**Example de única rota:**
+**Single route example:**
 ```typescript
 import { Router, LoadRoutes } from 'kenai';
 import { Get } from 'kenai/methods';
