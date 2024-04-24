@@ -14,7 +14,7 @@ export class MemoryCache {
         const value = this._cache.get('cache/' + path)?.value;
         if (!value) return;
 
-        return zlib.inflateSync(value);
+        return JSON.parse(zlib.inflateSync(value).toString());
     }
 
     /**
