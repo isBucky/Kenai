@@ -1,8 +1,8 @@
 /**
- * Use essa função para resolver paths das rotas, mas pode ser usado para outros fins.
+ * Use this function to resolve route paths, but it can be used for other purposes.
  *
- * @param path Caminho que você ira usar
- * @returns O caminho de forma correta
+ * @param path Path you will use
+ * @returns The correct way
  */
 export function resolvePath(path: string) {
     return path?.length ? '/' + path?.split('/').filter(Boolean).join('/') : '/';

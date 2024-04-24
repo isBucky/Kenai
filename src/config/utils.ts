@@ -39,13 +39,13 @@ export enum MethodsEnum {
 export type Methods = keyof typeof MethodsEnum | Lowercase<keyof typeof MethodsEnum>;
 
 export const Status = {
-    // Respostas de informação
+    // Information Responses
     Continue: 100,
     Switching_Protocols: 101,
     Processing: 102,
     Early_Hints: 103,
 
-    // Respostas bem-sucedidas
+    // Successful responses
     OK: 200,
     Created: 201,
     Accepted: 202,
@@ -57,7 +57,7 @@ export const Status = {
     Already_Reported: 208,
     IM_Used: 226,
 
-    // mensagens de redirecionamento
+    // redirect messages
     Multiple_Choices: 300,
     Moved_Permanently: 301,
     Found: 302,
@@ -67,7 +67,7 @@ export const Status = {
     Temporary_Redirect: 307,
     Permanent_Redirect: 308,
 
-    // Respostas de erro do cliente
+    // Client error responses
     Bad_Request: 400,
     Unauthorized: 401,
     Payment_Required: 402,
@@ -98,7 +98,7 @@ export const Status = {
     Request_Header_Fields_Too_Large: 431,
     Unavailable_For_Legal_Reasons: 451,
 
-    // Respostas de erro do servidor
+    // Server error responses
     Internal_Server_Error: 500,
     Not_Implemented: 501,
     Bad_Gateway: 502,

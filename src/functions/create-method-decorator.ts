@@ -18,11 +18,11 @@ import type { RouteHandler } from '../router';
 import type { CacheOptions } from '../cache';
 
 /**
- * Use essa função para criar um decorator para os métodos de requisição
+ * Use this function to create a decorator for the request methods
  *
- * @param method Método que vai ser criado
- * @param url Caminho da rota
- * @param options Opções de configuração da rota
+ * @param method Method that will be created
+ * @param url Route path
+ * @param options Route configuration options
  */
 export function createMethodDecorator(
     method: Methods,
@@ -100,23 +100,23 @@ export type MethodDecoratorParams = [path?: string, options?: MethodDecoratorOpt
 
 export interface MethodDecoratorOptions {
     /**
-     * Use para definir o status da resposta da requisição
+     * Use to set the request response status
      *
      * @default 200 = OK
      */
     status?: number | keyof typeof Status;
 
     /**
-     * Use para definir o esquema de validação da resposta da requisição
+     * Use to define the request response validation scheme
      */
     replySchema?: {
         /**
-         * Esquema para validar a resposta
+         * Scheme to validate the response
          */
         schema: any;
 
         /**
-         * Se você deseja que ele não remova as chaves estranhas do objeto, define como false
+         * If you want it to not remove extraneous keys from the object, set it to false
          *
          * @default false
          */
@@ -124,7 +124,7 @@ export interface MethodDecoratorOptions {
     };
 
     /**
-     * Use para definir as validações da rota
+     * Use to set route validations
      */
     validations?: Validation[];
 }
@@ -137,68 +137,68 @@ export type Validation = (
 
 export interface RouteStructure {
     /**
-     * Caminho que a rota é responsável
+     * Path that the route is responsible for
      */
     url: string;
 
     /**
-     * Método da requisição da rota
+     * Route request method
      */
     method: Methods;
 
     /**
-     * Função repensável por responder a requisição
+     * Responsible function for responding to request
      */
     handler: RouteHandler;
 
     controller: any;
 
     /**
-     * Aqui vai ficar todas as opções de definição da rota, como qual status de resposta, cache, etc.
+     * Here you will find all the route definition options, such as response status, cache, etc.
      */
     options?: RouteOptions;
 
     /**
-     * Aqui vai ficar as informações que a pessoa quiser salvar na rota, algo que seja relevante
+     * Here will be the information that the person wants to save on the route, something that is relevant
      */
     metadata: any;
 
     /**
-     * Validações para a rota antes que ela seja respondida pela função principal
+     * Validations for the route before it is responded to by the main function
      */
     validations?: Validation[];
 }
 
 export interface RouteOptions {
     /**
-     * Docs da rota
+     * Route Docs
      */
     docs?: DocsDecoratorOptions;
 
     /**
-     * Parâmetros da função principal
+     * Main function parameters
      */
     functionParams?: string[];
 
     /**
-     * Opções de resposta da requisição
+     * Request response options
      */
     reply?: {
         /**
-         * Status da requisição que a rota vai retornar
+         * Status of the request that the route will return
          *
          * @default 200
          */
         status?: number;
 
         /**
-         * Esquema de validação da resposta da requisição
+         * Request response validation scheme
          */
         replySchema?: MethodDecoratorOptions['replySchema'];
     };
 
     /**
-     * Se definido a rota possui uma cache aonde o retorno da requisição sera salvo
+     * If defined, the route has a cache where the request return will be saved
      */
     cache?: CacheOptions & { deleteCache?: boolean; };
 }

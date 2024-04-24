@@ -1,6 +1,8 @@
 import { createParamDecorator } from '../functions';
 
 /**
- * Use essa função para obter o objeto reply do fastify
+ * Use this function to get the fastify reply object
+ * 
+ * @see {@link https://github.com/isBucky/Kenai?tab=readme-ov-file#params | Documentation}
  */
 export const Reply = (key?: string) => createParamDecorator('reply', key);

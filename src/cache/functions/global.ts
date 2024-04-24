@@ -9,27 +9,27 @@ export class KenaiGlobal {
     }
 
     /**
-     * Use essa função para obter valores globais
+     * Use this function to get global values
      *
-     * @param path Caminho
+     * @param path Path
      */
     static get(path: string) {
         return this._global.get(path);
     }
 
     /**
-     * Use para definir valores globais
+     * Use to set global values
      *
-     * @param path Caminho
+     * @param path Path
      */
     static set(path: string, value: any) {
         return this._global.set(path, value);
     }
 
     /**
-     * Use para deletar valores globais
+     * Use to delete global values
      *
-     * @param path Caminho
+     * @param path Path
      */
     static delete(path: string) {
         return this._global.delete(path);

@@ -9,10 +9,10 @@ import type { RouteStructure, RouteOptions } from './create-method-decorator';
 import type { RouteHandler } from '../router';
 
 /**
- * Use essa função para gerenciar os retornos dos métodos
+ * Use this function to manage method returns
  *
- * @param target Alvo do decorator
- * @param descriptor Descriptor do alvo
+ * @param target Decorator target
+ * @param descriptor Target descriptor
  */
 export async function HandlerMethod(
     originalFunction: (...args: any[]) => unknown,
@@ -30,7 +30,7 @@ export async function HandlerMethod(
         return await originalFunction(...restFunctionArgs);
     if (request.socket.closed) return;
 
-    // Verificando se essa rota possui cache no redis, caso sim ele retornara o valor
+    // Checking if this route has a cache in redis, if so, it will return the value
     let cacheData: any | void;
     if (handlerOptions.cache && !handlerOptions.cache.deleteCache) {
         cacheData = await CacheHandler.get(request, handlerOptions.cache);
@@ -46,11 +46,11 @@ export async function HandlerMethod(
         ...resolveParams(restFunctionArgs, handlerOptions.functionParams),
     );
 
-    // Caso a rota for definida como uma rota de deletar, ele vai verificar se aquela rota existe no cache
+    // If the route is defined as a delete route, it will check if that route exists in the cache
     if (handlerOptions.cache?.deleteCache) CacheHandler.delete(request, handlerOptions.cache);
     if (request.socket.closed) return;
 
-    // Salvando o valor retornado pela rota no cache
+    // Saving the value returned by the route in the cache
     if (handlerOptions.cache && !cacheData && !handlerOptions.cache.deleteCache)
         CacheHandler.set(request, handlerOptions.cache, returnedFunctionValue);
 
@@ -61,10 +61,10 @@ export async function HandlerMethod(
 }
 
 /**
- * Use essa função para resolver os parâmetros da função
+ * Use this function to resolve the function parameters
  *
- * @param restFunctionArgs Parâmetros da função
- * @param params Parâmetros da função
+ * @param restFunctionArgs Function parameters
+ * @param params Function parameters
  */
 function resolveParams(restFunctionArgs: RestFunctionArgs, params?: string[]) {
     if (!params || !params.length) return restFunctionArgs;
@@ -76,9 +76,9 @@ function resolveParams(restFunctionArgs: RestFunctionArgs, params?: string[]) {
 }
 
 /**
- * Use essa função para responder a requisição
+ * Use this function to respond to the request
  *
- * @param reply Objeto response da requisição
+ * @param reply Request response object
  */
 export function Send(
     request: Parameters<RouteHandler>[0],

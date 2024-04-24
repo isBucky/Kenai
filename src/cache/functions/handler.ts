@@ -5,14 +5,12 @@ import { Redis } from './redis';
 import type { RouteOptions } from '../../functions';
 import type { FastifyRequest } from 'fastify';
 
-/**
- * 
- */
 export class CacheHandler {
     /**
+     * Use this function to get a value from the cache
      * 
-     * @param request 
-     * @param cache 
+     * @param request Request body
+     * @param cache Cache data
      */
     static async get(request: FastifyRequest, cache: NonNullable<RouteOptions['cache']>) {
         if (request?.socket?.closed) return;
@@ -22,10 +20,11 @@ export class CacheHandler {
     }
 
     /**
+     * Use this function to save new values ​​to the cache
      * 
-     * @param request 
-     * @param cache 
-     * @param value 
+     * @param request Request body
+     * @param cache Cache data
+     * @param value Value to save in cache
      */
     static async set(
         request: FastifyRequest,
@@ -39,9 +38,10 @@ export class CacheHandler {
     }
 
     /**
+     * Use this function to delete values ​​from the cache
      * 
-     * @param request 
-     * @param cache 
+     * @param request Request body
+     * @param cache Cache data
      */
     static async delete(request: FastifyRequest, cache: NonNullable<RouteOptions['cache']>) {
         if (request?.socket?.closed) return;

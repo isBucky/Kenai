@@ -1,15 +1,15 @@
 import { Router, type RouterStructure } from '../router';
 import { Symbols } from '../config/utils';
 
-import NodePath from 'node:path';
-
 // Types
 import type { FastifyInstance, RouteOptions } from 'fastify';
 
 /**
- * Use essa função para carregar as rotas automaticamente
+ * Use this function to automatically load routes
  *
- * @param options Opções de configuração
+ * @param options Configuration options
+ * 
+ * @see {@link https://github.com/isBucky/Kenai?tab=readme-ov-file#loadroutes | Documentation}
  */
 export async function LoadRoutes(options: LoadRoutesOptions) {
     if (!options.mainRoute) throw new Error('You did not define a main route.');

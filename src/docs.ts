@@ -4,9 +4,11 @@ import { Symbols } from './config/utils';
 import type { Controller } from './functions/';
 
 /**
- * Use essa função para definir as docs dessa rota
+ * Use this function to define the docs for this route
  *
- * @param options Dados pata
+ * @param options Data for documentation
+ * 
+ * @see {@link https://github.com/isBucky/Kenai?tab=readme-ov-file#docs | Documentation}
  */
 export function Docs(options: DocsDecoratorOptions) {
     return function (target: object, key: PropertyKey, descriptor: PropertyDescriptor) {

@@ -6,10 +6,12 @@ import type { Controller, RouteStructure, Validation } from './functions/';
 import type { FastifyRequest, FastifyReply } from 'fastify';
 
 /**
- * Use esse decorator para criar um gerenciador de rotas
+ * Use this decorator to create a route manager
  *
- * @param url Caminho para criar a rota
- * @param options Opções de configurações da rota
+ * @param url Path to create the route
+ * @param options Route settings options
+ * 
+ * @see {@link https://github.com/isBucky/Kenai?tab=readme-ov-file#router | Documentation}
  */
 function Router(pathRouter?: string | RouterOptions, optionsRoute?: RouterOptions) {
     let url = pathRouter;
@@ -25,9 +27,9 @@ function Router(pathRouter?: string | RouterOptions, optionsRoute?: RouterOption
         const routes: Map<string, RouteStructure> = new Map();
 
         /**
-         * Use essa função para resolver as rotas
+         * Use this function to resolve routes
          *
-         * @param routesUnresolved Rotas não resolvidas
+         * @param routesUnresolved Unresolved routes
          */
         function setRoutes(routesUnresolved: RouteStructure[]) {
             for (const route of routesUnresolved) {
@@ -45,7 +47,7 @@ function Router(pathRouter?: string | RouterOptions, optionsRoute?: RouterOption
             }
         }
 
-        // Verificando se existe controllers definidos
+        // Checking if there are defined controllers
         if (options?.controllers?.length) {
             for (const controller of options.controllers) {
                 const controllerData: Controller = Reflect.getMetadata(
@@ -58,11 +60,11 @@ function Router(pathRouter?: string | RouterOptions, optionsRoute?: RouterOption
             }
         }
 
-        // Verificando se existe controllers na classe do Router
+        // Checking if there are controllers in the Router class
         if (controllersInRouter && Object.keys(controllersInRouter).length)
             setRoutes(Object.values(controllersInRouter));
 
-        // Puxando as rotas dos gerenciadores de rotas
+        // Pulling routes from route managers
         if (options?.routes?.length) {
             for (const routerClass of options.routes) {
                 const router: RouterStructure = Reflect.getMetadata(Symbols['router'], routerClass);
@@ -82,9 +84,9 @@ function Router(pathRouter?: string | RouterOptions, optionsRoute?: RouterOption
 }
 
 /**
- * Use essa função para puxar os dados contidos na classe
+ * Use this function to pull data contained in the class
  *
- * @param target Classe Router
+ * @param target Router Class
  */
 Router.getData = function GetData(
     target: new (...args: any[]) => any,

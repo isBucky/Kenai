@@ -1,11 +1,11 @@
 import { z as zod } from 'zod';
 
 /**
- * Use essa função para fazer a validação dos schemas do zod,
- * com mensagens formatadas de fácil entendimento
+ * Use this function to validate zod schemas,
+ * with messages formatted for easy understanding
  *
- * @param schema Schema do zod para ser verificado
- * @param data Valor a ser verificado pelo schema do zod
+ * @param schema Zod schema to be checked
+ * @param data Value to be checked by the zod schema
  */
 export default function parse<T extends zod.ZodTypeAny>(
     schema: T,

@@ -13,9 +13,12 @@ export class Redis {
     private static _prefix = 'kenai:cache:';
 
     /**
-     * Use essa função para iniciar a conexão com redis
+     * Use this function to start connecting to redis
      *
-     * @param options Opções de configurações
+     * @param options Settings options
+     *
+     * @see
+     * {@link https://github.com/isBucky/Kenai?tab=readme-ov-file#cacheinitialize | Documentation}
      */
     static initialize(options?: IoRedis | IoRedis['options'] | string) {
         if (!options) return KenaiGlobal.set('redis', new IoRedis());
@@ -25,9 +28,9 @@ export class Redis {
     }
 
     /**
-     * Usa essa função para obter valores salvos no redis
+     * Use this function to get values ​​saved in redis
      *
-     * @param path Caminho
+     * @param path Path
      */
     static async get(path: string) {
         if (!this._redis)
@@ -42,11 +45,11 @@ export class Redis {
     }
 
     /**
-     * Usa essa função para definir valores no redis
+     * Use this function to set values ​​in redis
      *
-     * @param path Caminho
-     * @param value Valor para ser definido
-     * @param ttl Tempo em segundos para expirar o valor
+     * @param path Path
+     * @param value Value to be set
+     * @param ttl Time in seconds for the value to expire
      */
     static async set(path: string, value: any, ttl: number = 5 * 60) {
         if (!this._redis)
@@ -64,9 +67,9 @@ export class Redis {
     }
 
     /**
-     * Use para deletar um valor do redis
+     * Use to delete a value from redis
      *
-     * @param path Caminho
+     * @param path Path
      */
     static async delete(path: string) {
         if (!this._redis)

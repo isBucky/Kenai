@@ -6,9 +6,9 @@ export class MemoryCache {
     private static _cache = KenaiGlobal;
 
     /**
-     * Use para obter valores salvos em cache na memória
+     * Use to get cached values ​​in memory
      *
-     * @param path Caminho
+     * @param path Path
      */
     static get(path: string): any {
         const value = this._cache.get('cache/' + path)?.value;
@@ -18,11 +18,11 @@ export class MemoryCache {
     }
 
     /**
-     * Use para definir valores no cache em memória
+     * Use to set values ​​in the in-memory cache
      *
-     * @param path Caminho
-     * @param value Valor para definir
-     * @param ttl Tempo em segundos para excluir o valor. Padrão: 5m
+     * @param path Path
+     * @param value Value to set
+     * @param ttl Time in seconds to delete the value. Standard: 5m
      */
     static set(path: string, value: any, ttl: number = 5 * 60) {
         if (!value) return;
@@ -38,9 +38,9 @@ export class MemoryCache {
     }
 
     /**
-     * Use para deletar valores no cache em memória
+     * Use to delete values ​​from the in-memory cache
      *
-     * @param path Caminho
+     * @param path Path
      */
     static delete(path: string) {
         return this._cache.delete('cache/' + path);
@@ -49,17 +49,17 @@ export class MemoryCache {
 
 export interface CacheData {
     /**
-     *  Valor salvo em cache
+     *  Value saved in cache
      */
     value: any;
 
-    /***
-     * Tempo em segundos para excluir o valor
+    /**
+     * Time in seconds to delete the value
      */
     ttl?: number;
 
     /**
-     * Tempo de expiração
+     * Expiration time
      */
     expiresIn: number;
 }

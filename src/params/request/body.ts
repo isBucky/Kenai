@@ -1,8 +1,10 @@
 import { createParamDecorator } from '../../functions/';
 
 /**
- * Use essa função para obter o objeto body do fastify
+ * Use this function to get the fastify body object
  *
- * @param key Nome do parâmetro que você deseja obter
+ * @param key Name of the parameter you want to get
+ * 
+ * @see {@link https://github.com/isBucky/Kenai?tab=readme-ov-file#params | Documentation}
  */
 export const Body = (key?: string) => createParamDecorator('request/body', key);

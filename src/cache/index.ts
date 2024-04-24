@@ -6,9 +6,11 @@ import { Redis } from './functions/redis';
 import type { Controller } from '../functions/';
 
 /**
+ * Use this decorator to create a cache in your route
  *
- * @param options
- * @returns
+ * @param options Cache configuration options
+ * 
+ * @see {@link https://github.com/isBucky/Kenai?tab=readme-ov-file#cache | Documentation}
  */
 export function Cache(optionsCache: CacheOptions) {
     return function (target: object, key: string, descriptor: PropertyDescriptor) {
@@ -17,7 +19,7 @@ export function Cache(optionsCache: CacheOptions) {
             target.constructor,
         );
 
-        // Verificando se a classe é um controller válido
+        // Checking if the class is a valid controller
         if (!controller || !controller[key]) return descriptor;
 
         Reflect.defineMetadata(
@@ -52,9 +54,11 @@ export interface CacheOptions {
 }
 
 /**
- * Use essa função para denominar qual rota vai ser a que apaga os dados
+ * Use this function to designate which route will be the one that erases the data
  *
- * @param redis Conexão redis
+ * @param redis Redis connection
+ * 
+ * @see {@link https://github.com/isBucky/Kenai?tab=readme-ov-file#cachedelete | Documentation}
  */
 Cache.Delete = DeleteCache;
 
@@ -62,5 +66,8 @@ Cache.Delete = DeleteCache;
  * Use essa função para iniciar a conexão com redis
  *
  * @param options Opções de configurações
+ *
+ * @see
+ * {@link https://github.com/isBucky/Kenai?tab=readme-ov-file#cacheinitialize | Documentation}
  */
 Cache.initialize = Redis.initialize;

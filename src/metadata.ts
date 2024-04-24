@@ -4,10 +4,12 @@ import { Symbols } from './config/utils';
 import type { Controller } from './functions/';
 
 /**
- * Usa essa função para definir dados extras que você quer levar junto as rotas
- *
- * @param data Dados para ser salvo
- */
+  * Use this function to define extra data that you want to take along the routes
+  *
+  * @param data Data to be saved
+  * 
+  * @see {@link https://github.com/isBucky/Kenai?tab=readme-ov-file#metadata | Documentation}
+  */
 export function Metadata(data: any) {
     return function (target: object, key: string, descriptor: PropertyDescriptor) {
         const controller: Controller = Reflect.getMetadata(
@@ -17,7 +19,7 @@ export function Metadata(data: any) {
 
         if (!controller || !controller[key]) return descriptor;
 
-        // Salvando os dados no controller
+        // Saving data in the controller
         Reflect.defineMetadata(
             Symbols['controller'],
             {
