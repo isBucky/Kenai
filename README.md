@@ -1,12 +1,12 @@
 <div align="center">
     <h1>Kenai</h1>
-    <p>Criação e gerenciamento de rotas <strong>Fastify</strong> usando decorators.</p>
+    <p>Creation and management of <strong>Fastify</strong> routes using decorators.</p>
 </div>
 
-# Tabela de conteúdo
+# Table of content
 
-- [**Instalação**](#)
-- [**Primeiros Passos**](#)
+- [**Installation**](#installation)
+- [**First steps**](#first-steps)
 - [**LoadRoutes**](#loadroutes)
 - [**Router**](#router)
 - [**Docs**](#docs)
@@ -17,11 +17,13 @@
 - [**Methods**](#methods)
 - [**Params**](#params)
 - [**Extra**](#extra)
+    - [**Controllers**](#controllers)
+    - [**Validations**](#validations)
     - [**Criar Decorators Para Métodos**](#)
     - [**Criar Decorators Para Parâmetros**](#)
 
 
-# Instalação
+# Installation
 
 NPM:
 ```powershell
@@ -38,14 +40,14 @@ Pnpm:
 pnpm add kenai
 ```
 
-# Primeiros Passos
+# First steps
 
-Abaixo tem uma exemplificação de como usar os decorators para criar suas rotas, a criação das rotas **é com base na rota principal** e para **toda sub-rota tem que haver uma rota principal**, assim como a rota `/users` deve pertencer a rota `/` (principal) e cada rota pode haver **controladores em pastas separadas** assim como no exemplo [**Clique aqui**](https://github.com/isBucky/Kenai/tree/main/examples/several-routes), deste modo **não poluindo seu código** criando varias funções em uma classe da rota.
+Below is an example of how to use decorators to create your routes, the creation of routes **is based on the main route** and for **every sub-route there must be a main route**, just like the route `/users` must belong to the `/` route (main) and each route can have **controllers in separate folders** as in the [**Click here**](https://github.com/isBucky/Kenai/tree/main/examples/several-routes) example, thus **not polluting your code** creating several functions in a route class.
 
-> **Note** Para saber mais sobre esses recursos leia [LoadRoutes](#loadroutes) e [Router](#router).
+> **Note** To learn more about these features read [LoadRoutes](#loadroutes) and [Router](#router).
 
 
-**Exemplo de única rota:**
+**Example de única rota:**
 ```typescript
 import { Router, LoadRoutes } from 'kenai';
 import { Get } from 'kenai/methods';
@@ -76,9 +78,9 @@ LoadRoutes({
 
 # LoadRoutes
 
-Você deve usar essa função para carregar todas as rotas criadas pelos decorators.
+You must use this function to load all routes created by decorators.
 
-**Parâmetros:**
+**Parameters:**
 
 ```typescript
 {
@@ -99,7 +101,7 @@ Você deve usar essa função para carregar todas as rotas criadas pelos decorat
 }
 ```
 
-**Exemplo:**
+**Example:**
 
 ```typescript
 LoadRoutes({
@@ -111,15 +113,15 @@ LoadRoutes({
 
 # Router
 
-Use esse decorator para criar novas rotas no servidor Fastify.
+Use this decorator to create new routes on the Fastify server.
 
-**Parâmetros:**
+**Parameters:**
 
-**Path:** Caminho que a rota será criada. Não é obrigatório.
+**Path:** Path that the route will be created. It's not mandatory.
 
 **Options:**
 
-> **Note** Saiba mais sobre [Controllers](#controllers) e [Validations](#validations).
+> **Note** Learn more about [Controllers](#controllers) and [Validations](#validations).
 
 ```typescript
 {
@@ -140,7 +142,7 @@ Use esse decorator para criar novas rotas no servidor Fastify.
 }
 ```
 
-**Exemplo:**
+**Example:**
 
 ```typescript
 @Router('/users', {
@@ -162,9 +164,9 @@ class MyRoute {}
 
 # Docs
 
-Use essa rota para definir um objeto contendo informações sobre a rota, com isso você pode criar docs personalizadas.
+Use this route to define an object containing information about the route, so you can create custom docs.
 
-**Parâmetros:**
+**Parameters:**
 
 ```typescript
 {
@@ -190,7 +192,7 @@ Use essa rota para definir um objeto contendo informações sobre a rota, com is
 }
 ```
 
-**Exemplo:**
+**Example:**
 
 ```typescript
 class MyController {
@@ -211,13 +213,13 @@ class MyController {
 
 # Metadata
 
-Use esse decorator para definir valores de sua preferencia na rota.
+Use this decorator to define preferred values for the route.
 
-**Parâmetros:**
+**Parameters:**
 
-O valor do parâmetro pode ser qualquer coisa para ser definida.
+The parameter value can be anything to be set.
 
-**Exemplo:**
+**Example:**
 
 ```typescript
 class MyController {
@@ -229,42 +231,41 @@ class MyController {
 }
 ```
 
-
 # Cache
 
-Use esse decorator para criar cache em rotas, com ela o tempo de requisições será mais **eficiente** e pode ser usada para **valores estáticos**, ou **valores dinâmicos** com uma expiração.
+Use this decorator to create cache in routes, with it the request time will be more **efficient** and can be used for **static values**, or **dynamic values** with an expiration.
 
-Com ele você pode armazenar em **memória** ou banco de dados **Redis**, para usar o Redis como cache verifique a função: [**Initialize**](#cacheinitialize).
+With it you can store it in **memory** or **Redis** database, to use Redis as a cache check the function: [**Initialize**](#cacheinitialize).
 
-> **Note** Os caminhos de criação dos valores no Redis, são com base na URL da rota.
+> **Note** The paths for creating values in Redis are based on the route URL.
 > 
-> Em caso de valor nulo ser retornado, será ignorado.
+> If a null value is returned, it will be ignored.
 
-**Parâmetros:**
+**Parameters:**
 
 ```typescript
 {
     /**
-     * Defina qual armazenamento deve usar
+     * Define which storage should use
      * 
      * @default memory
      */
     cacheIn: 'memory' | 'redis';
 
     /**
-     * Defina quanto tempo esse valor vai expirar e torna-se obsoleto
+     * Set how long this value will expire and become obsolete
      */
     ttl?: number;
 }
 ```
 
-**Exemplo:**
+**Example:**
 
 ```typescript
 class MyController {
     @Cache({
         cacheIn: 'memory',
-        ttl: 120 // 2 minutos
+        ttl: 120 // 2 minutes
     })
     @Get('/user/:id')
     myHandler() {}
@@ -273,11 +274,11 @@ class MyController {
 
 ## Cache.delete
 
-Use essa função para uma determinada rota que deleta/atualiza valores, com isso removerá automaticamente os dados salvos em cache, caso tenho alguma rota que salve-os para reutiliza-los, assim atualizando-os toda vez que são mudados.
+Use this function for a given route that deletes/updates values, this will automatically remove the data saved in cache, if I have a route that saves it to reuse it, thus updating it every time it is changed.
 
-> **Note** Não necessariamente precisar ser uma rota que deleta/atualiza, use conforme você acha que os dados devem ser atualizados conforme mudam.
+> **Note** It doesn't necessarily have to be a delete/update route, use as you think the data should be updated as it changes.
 
-**Exemplo:**
+**Example:**
 
 ```typescript
 class MyController {
@@ -289,11 +290,11 @@ class MyController {
 
 ## Cache.initialize
 
-Com essa função você pode iniciar uma conexão com o Redis, ou apenas definir o corpo do Redis ja conectado.
+With this function you can initiate a connection with Redis, or just define the already connected Redis body.
 
-> **Note** ELE NÃO É UM DECORATOR. Use essa função antes do servidor ficar online.
+> **Note** HE IS NOT A DECORATOR. Use this function before the server comes online.
 
-**Exemplo:**
+**Example:**
 
 ```typescript
 Cache.initialize('redis://user:root@localhost:6379');
@@ -316,34 +317,34 @@ Cache.initialize(redis);
 
 # Methods
 
-Use esses decorators para criar um novo caminho para sua rota, assim assumindo um papel de [**Controller**](#controllers).
+Use these decorators to create a new path for your route, thus assuming a [**Controller**](#controllers) role.
 
-Os métodos existentes são: **Delete**, **Get**, **Patch**, **Post** e **Put**.
+The existing methods are: **Delete**, **Get**, **Patch**, **Post** and **Put**.
 
-**Parâmetros:**
+**Parameters:**
 
-> **Note** Todos os decorators de métodos possuem os mesmos valores de parâmetros.
+> **Note** All method decorators have the same parameter values.
 
 ```typescript
 {
     /**
-     * Use para definir o status de resposta da requisição
+     * Use to set the request response status
      *
      * @default 200 = OK
      */
     status?: number | keyof typeof Status;
 
     /**
-     * Use para definir um esquema de validação da resposta da requisição usando zod
+     * Use to define a request response validation scheme using zod
      */
     replySchema?: {
         /**
-         * Esquema para validar a resposta
+         * Scheme to validate the response
          */
         schema: any;
 
         /**
-         * Se você deseja que ele não remova as chaves estranhas do objeto, define como false
+         * If you want it to not remove extraneous keys from the object, set it to false
          *
          * @default false
          */
@@ -351,13 +352,13 @@ Os métodos existentes são: **Delete**, **Get**, **Patch**, **Post** e **Put**.
     };
 
     /**
-     * Use para definir as validações da rota
+     * Use to set route validations
      */
     validations?: Validation[];
 }
 ```
 
-**Exemplo:**
+**Example:**
 
 ```typescript
 class MyController {
@@ -370,24 +371,24 @@ class MyController {
 
 # Params
 
-Os decorators **Reply**, **Body**, **Headers**, **Params**, **Query** e **Request** são responsáveis por trazer valores do corpo da requisição, abaixo terá uma descrição de cada decorator.
+The decorators **Reply**, **Body**, **Headers**, **Params**, **Query** and **Request** are responsible for bringing values from the request body, below you will find a description of each decorator.
 
-- **Reply**: Obtém o corpo de resposta da requisição.
-- **Body**: Obtêm o dados enviados nessa requisição.
-- **Headers**: Obtém o cabeçalho da requisição.
-- **Params**: Obtém os parâmetros fornecidos na URL da rota.
-- **Query**: Obtém os valores de uma query informada na URL.
-- **Request**: Obtém o corpo da requisição
+- **Reply**: Gets the request response body.
+- **Body**: Obtains the data sent in this request.
+- **Headers**: Gets the request header.
+- **Params**: Gets the parameters provided in the route URL.
+- **Query**: Gets the values of a query provided in the URL.
+- **Request**: Gets the body of the request
 
-**Parâmetros:**
+**Parameters:**
 
-Você pode usar o parâmetro `key` para obter um valor especifico no corpo da requisição.
+You can use the `key` parameter to get a specific value in the request body.
 
 ```typescript
 Params(key?: string)
 ```
 
-**Exemplo:**
+**Example:**
 
 ```typescript
 class MyController {
