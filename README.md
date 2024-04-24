@@ -4,9 +4,8 @@
     <p>
         <a href="https://www.npmjs.com/package/kenai"><img src="https://img.shields.io/npm/v/kenai?style=flat-square&maxAge=3600" alt="NPM version" /></a>
         <a href="https://www.npmjs.com/package/kenai"><img src="https://img.shields.io/npm/dt/kenai?style=flat-square&maxAge=3600" alt="NPM downloads" /></a>
-        <a href="https://www.npmjs.com/package/kenai"><img src="https://img.shields.io/github/languages/code-size/isBucky/Object.mn?style=flat-square&maxAge=3600" alt="NPM size" /></a>
+        <a href="https://www.npmjs.com/package/kenai"><img src="https://img.shields.io/github/languages/code-size/isBucky/Kenai?style=flat-square&maxAge=3600" alt="NPM size" /></a>
         <a href="https://www.npmjs.com/package/kenai"><img src="https://img.shields.io/npm/l/kenai?style=flat-square&maxAge=3600" alt="NPM license" /></a>
-        <a href="https://www.npmjs.com/package/kenai"><img src="https://nodei.co/npm/kenai.png?downloads=true&stars=true" alt="NPM Banner"></a>
   </p>
 </div>
 
