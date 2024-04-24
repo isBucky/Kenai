@@ -12,14 +12,10 @@
 - [**Docs**](#docs)
 - [**Metadata**](#metadata)
 - [**Cache**](#cache)
+    - [**Cache.delete**](#cachedelete)
+    - [**Cache.initialize**](#cacheinitialize)
 - [**Methods**](#methods)
 - [**Params**](#params)
-    - [**Reply**](#reply)
-    - [**Request**](#request)
-    - [**Body**](#body)
-    - [**Headers**](#headers)
-    - [**Params**](#params)
-    - [**Query**](#query)
 - [**Extra**](#extra)
     - [**Criar Decorators Para Métodos**](#)
     - [**Criar Decorators Para Parâmetros**](#)
@@ -376,17 +372,12 @@ class MyController {
 
 Os decorators **Reply**, **Body**, **Headers**, **Params**, **Query** e **Request** são responsáveis por trazer valores do corpo da requisição, abaixo terá uma descrição de cada decorator.
 
-**Reply**: Obtém o corpo de resposta da requisição.
-
-**Body**: Obtêm o dados enviados nessa requisição.
-
-**Headers**: Obtém o cabeçalho da requisição.
-
-**Params**: Obtém os parâmetros fornecidos na URL da rota.
-
-**Query**: Obtém os valores de uma query informada na URL.
-
-**Request**: Obtém o corpo da requisição
+- **Reply**: Obtém o corpo de resposta da requisição.
+- **Body**: Obtêm o dados enviados nessa requisição.
+- **Headers**: Obtém o cabeçalho da requisição.
+- **Params**: Obtém os parâmetros fornecidos na URL da rota.
+- **Query**: Obtém os valores de uma query informada na URL.
+- **Request**: Obtém o corpo da requisição
 
 **Parâmetros:**
 
