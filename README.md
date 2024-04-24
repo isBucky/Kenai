@@ -46,7 +46,7 @@ pnpm add kenai
 
 Abaixo tem uma exemplificação de como usar os decorators para criar suas rotas, a criação das rotas **é com base na rota principal** e para **toda sub-rota tem que haver uma rota principal**, assim como a rota `/users` deve pertencer a rota `/` (principal) e cada rota pode haver **controladores em pastas separadas** assim como no exemplo [**Clique aqui**](https://github.com/isBucky/Kenai/tree/main/examples/several-routes), deste modo **não poluindo seu código** criando varias funções em uma classe da rota.
 
-> **Para saber mais sobre esses recursos leia [LoadRoutes](#loadroutes) e [Router](#router).**
+> **Note** Para saber mais sobre esses recursos leia [LoadRoutes](#loadroutes) e [Router](#router).
 
 
 **Exemplo de única rota:**
@@ -115,15 +115,15 @@ LoadRoutes({
 
 # Router
 
-Use essa rota para criar novas rotas para o Fastify
+Use essa rota para criar novas rotas para o Fastify.
 
 **Parâmetros:**
 
-**Path:** Caminho que a rota será criada. Não é obrigatório
+**Path:** Caminho que a rota será criada. Não é obrigatório.
 
 **Options:**
 
-> **Saiba mais sobre [Controllers](#controllers) e [Validations](#validations)**
+> **Note** Saiba mais sobre [Controllers](#controllers) e [Validations](#validations).
 
 ```typescript
 {
@@ -166,7 +166,7 @@ class MyRoute {}
 
 # Docs
 
-Use essa rota para definir um objeto contendo informações sobre a rota, com isso você pode criar docs personalizadas
+Use essa rota para definir um objeto contendo informações sobre a rota, com isso você pode criar docs personalizadas.
 
 **Parâmetros:**
 
@@ -215,11 +215,11 @@ class MyController {
 
 # Metadata
 
-Use esse decorator para definir valores de sua preferencia na rota
+Use esse decorator para definir valores de sua preferencia na rota.
 
 **Parâmetros:**
 
-O valor do parâmetro pode ser qualquer coisa para ser definida
+O valor do parâmetro pode ser qualquer coisa para ser definida.
 
 **Exemplo:**
 
@@ -240,9 +240,9 @@ Usa esse decorator para criar cache em rotas, com ela o tempo de requisições s
 
 Com ele você pode usar quando em **memória** ou usando o **banco de dados Redis**, para usar o Redis você dever usar a função [**Initialize**](#cacheinitialize).
 
-> **Os caminhos para a criação dos valores do cache no banco de dados Redis, são com base na url da rota.**
+> **Note** Os caminhos para a criação dos valores do cache no banco de dados Redis, são com base na url da rota.
 > 
-> **Em caso de nenhum valor ser retornado, será ignorado.**
+> Em caso de nenhum valor ser retornado, será ignorado.
 
 **Parâmetros:**
 
@@ -279,7 +279,7 @@ class MyController {
 
 Use essa função para uma determinada rota que deleta/atualiza valores, com isso removerá automaticamente os dados salvos em cache, caso tenho alguma rota que salve-os para reutiliza-los, assim atualizando-os toda vez que são mudados.
 
-> **Não necessariamente precisar ser em uma rota que deleta/atualiza, use conforme você acha que os dados devem ser atualizados conforme mudam.**
+> **Note** Não necessariamente precisar ser em uma rota que deleta/atualiza, use conforme você acha que os dados devem ser atualizados conforme mudam.
 
 **Exemplo:**
 
@@ -295,7 +295,7 @@ class MyController {
 
 Com essa função você pode iniciar uma conexão com o Redis, ou apenas definir o corpo do Redis ja conectado.
 
-> **ELE NÃO É UM DECORATOR. Use essa função antes do servidor ficar online.**
+> **Note** ELE NÃO É UM DECORATOR. Use essa função antes do servidor ficar online.
 
 **Exemplo:**
 
@@ -324,7 +324,7 @@ Use esses decorators para criar um novo caminho para sua rota, os métodos exist
 
 **Parâmetros:**
 
-> **Todos os decorators de métodos possuem os mesmos valores de parâmetros**
+> **Note** Todos os decorators de métodos possuem os mesmos valores de parâmetros.
 
 ```typescript
 {
