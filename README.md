@@ -323,6 +323,8 @@ The existing methods are: **Delete**, **Get**, **Patch**, **Post** and **Put**.
 
 **Parameters:**
 
+An available option is called [**validations**](#validations), which allows you to set validations for the route endpoint. This makes it possible to carry out checks even before the data reaches the final function to be processed.
+
 > **Note** All method decorators have the same parameter values.
 
 ```typescript
@@ -412,7 +414,9 @@ Para criar controladores em suas rotas, basta utilizar os decoradores [**Methods
 ```typescript
 // Maneira correta
 class MyController {
-    @Cache('memory')
+    @Cache({
+        cacheIn: 'memory'
+    })
     @Get()
     myHandler() {
         return { message: 'Hello!' }
@@ -422,7 +426,9 @@ class MyController {
 // Maneira errada
 class MyController {
     @Get()
-    @Cache('memory')
+    @Cache({
+        cacheIn: 'memory'
+    })
     myHandler() {
         return { message: 'Hello!' }
     }
@@ -433,6 +439,95 @@ No último exemplo, observe que o decorador `Cache` está abaixo de `Get`. Nessa
 
 ## Validations
 
-## Criar decorators para métodos
+Com as funções de validação, é possível realizar várias verificações nos dados recebidos de uma requisição, tornando a manipulação dos dados retornados segura e simples.
+
+As validações podem ser aplicadas aos [**Methods**](#methods), garantindo que o endpoint só seja acessado após verificação. Para cada novo método criado, as validações precisam ser informadas novamente. Se desejar que as validações sejam aplicadas a vários controladores, siga as instruções abaixo.
+
+Para tornar as validações "globais" para vários controladores, é possível defini-las nas opções do decorador [**Router**](#router). Dessa forma, todos os controladores definidos nessa rota terão todas as validações especificadas no **Router**.
+
+**Como fazer a função de validação:**
+
+```typescript
+// Estrutura de uma função de validação
+type Validation = (
+    request: any,
+    reply: any,
+    done: HookHandlerDoneFunction,
+) => Promise<unknown> | unknown;
+
+// Exemplo de função
+function validation(request, reply, done) { /* ... */ }
+```
+
+**Exemplo de validação no controlador:**
+
+```typescript
+const users = {
+    1: {
+        name: 'Bucky',
+    },
+};
+
+function UserIdIsValid(request, reply, done) {
+    if (!('id' in request.params) || isNaN(Number(request.params.id)))
+        return done(new Error('This ID is invalid or does not exist'));
+
+    return done();
+}
+
+class MyController {
+    @Cache({
+        cacheIn: 'memory'
+    })
+    @Get('user/:id', {
+        validations: [UserIdIsValid],
+    })
+    myHandler(@Params('id') userId: string) {
+        return userId;
+    }
+}
+```
+
+**Exemplo de validação no Router:**
+
+```typescript
+@Router({
+    controllers: [MyController, MyControllerTwo],
+    validations: [UserIdIsValid]
+})
+class MyRouter {}
+```
+
+Dessa forma como exemplificado acima, os controladores `MyController` e `MyControllerTwo` terão a mesma validação de verificar o id do usuário, obtendo dos parâmetros da requisição.
 
 ## Criar decorators para parâmetros
+
+Você também pode criar decoradores personalizados paras as rotas, assim simplificando algumas tarefas para a manipulação da requisição.
+
+**Parâmetros:**
+
+```typescript
+createParamDecorator(path: string, key?: string);
+```
+
+- **Path:** Aqui, você deve definir qual objeto ou dado deseja obter. O caminho para os valores desejados deve ser estruturado dessa maneira, assemelhando-se a um caminho de arquivo: `request/body` ou `request`. Isso é gerenciado graças ao pacote [**Object.mn**](https://github.com/isBucky/Object.mn).
+
+- **Key:** Use a opção **`key`** para obter um valor específico dentro desse objeto. Esta opção é opcional. Abaixo, terá dois exemplos: um decorator com o uso de `key` e outro sem, obtendo apenas o valor inteiro.
+
+
+**Exemplo:**
+
+```typescript
+import { createParamDecorator } from './';
+
+export const User = (key?: string) => createParamDecorator('request/user', key);
+
+export const IP = createParamDecorator('request/ip');
+
+class MyController {
+    @Get()
+    myHandler(@User() user: any, @IP ip: string) {
+        return { user, ip };
+    }
+}
+```
