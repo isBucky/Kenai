@@ -119,7 +119,7 @@ Use this decorator to create new routes on the Fastify server.
 Router(pathRouter?: string | RouterOptions, optionsRoute?: RouterOptions)
 ```
 
-- **pathRouter:** Path that the route will be created. It's not mandatory.
+- **pathRouter:** Path that the route will be created. It's not mandatory. Default: `\`.
 
 - **optionsRoute:**
   > **Note** Learn more about [Controllers](#controllers) and [Validations](#validations).
