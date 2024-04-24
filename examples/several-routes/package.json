@@ -1,15 +1,18 @@
 {
-  "name": "several-routes",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "fastify": "^4.26.2"
-  }
+    "name": "several-routes",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "dev": "tsx index.ts"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "bucky.db-local": "^1.2.1",
+        "fastify": "^4.26.2",
+        "kenai": "^1.0.4",
+        "tsx": "^4.7.2"
+    }
 }
