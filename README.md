@@ -53,8 +53,7 @@ Below is an example of how to use decorators to create your routes, the creation
 
 **Single route example:**
 ```typescript
-import { Router, LoadRoutes } from 'kenai';
-import { Get } from 'kenai/methods';
+import { Router, LoadRoutes, Get } from 'kenai';
 import fastify from 'fastify';
 
 const app = fastify();
@@ -370,6 +369,10 @@ An available option is called [**validations**](#validations), which allows you 
 **Example:**
 
 ```typescript
+import { Get } from 'kenai';
+//Or
+import { Get } from 'kenai';
+
 class MyController {
     @Get('/user/:id', {
         validations: [IsValidId],
@@ -400,6 +403,10 @@ Params(key?: string)
 **Example:**
 
 ```typescript
+import { Get, Params } from 'kenai';
+// Or
+import { Params } from 'kenai/params';
+
 class MyController {
     @Get('user/:id')
     myHandler(@Params('id') userId: string) {
