@@ -8,7 +8,7 @@ import type { FastifyInstance, RouteOptions } from 'fastify';
  * Use this function to automatically load routes
  *
  * @param options Configuration options
- * 
+ *
  * @see {@link https://github.com/isBucky/Kenai?tab=readme-ov-file#loadroutes | Documentation}
  */
 export async function LoadRoutes(options: LoadRoutesOptions) {
@@ -24,6 +24,13 @@ export async function LoadRoutes(options: LoadRoutesOptions) {
     );
 }
 
+/**
+ * Use this function to load routes
+ * 
+ * @param app Fastify application
+ * @param data Data contained in the route
+ * @param controllerParameters Controller parameters
+ */
 async function makeRoutes(
     app: FastifyInstance,
     data?: RouterStructure,
@@ -38,15 +45,21 @@ async function makeRoutes(
     if (!routes.size) return null;
 
     for (const [, route] of routes.entries()) {
-        app.route({
-            url: route.url,
-            method: route.method,
+        try {
+            app.route({
+                url: route.url,
+                method: route.method,
 
-            preValidation: route.validations,
-            handler: (<RouteOptions['handler']>route.handler).bind(
-                new route.controller(...(controllerParameters || [])),
-            ),
-        });
+                preValidation: route.validations,
+                handler: (<RouteOptions['handler']>route.handler).bind(
+                    new route.controller(...(controllerParameters || [])),
+                ),
+            });
+        } catch (error: any) {
+            error.route == route;
+
+            throw error;
+        }
     }
 
     return routes;
