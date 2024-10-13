@@ -1,1 +1,1 @@
-export * from './dist/src/params/index';
+export * from './dist/src/decorators/params/index';

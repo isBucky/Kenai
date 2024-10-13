@@ -1,4 +1,3 @@
-import 'zod-openapi/extend';
 import '@fastify/swagger';
 
 import { Middlewares } from '@decorators/middlewares';
@@ -14,8 +13,8 @@ import fastifyPlugin from 'fastify-plugin';
 import type { ControllerMetadata } from 'types/controllers';
 import type { CustomZodParser } from './validation-schema';
 import type { FastifySchema, RouteOptions } from 'fastify';
+import type { RedisOptions } from 'ioredis';
 import type Redis from 'ioredis';
-import { RedisOptions } from 'ioredis';
 
 /**
  * Plugin responsible for loading the decorator routes

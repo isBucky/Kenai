@@ -1,1 +1,1 @@
-export * from './dist/src/methods/index';
+export * from './dist/src/decorators/methods/index';
