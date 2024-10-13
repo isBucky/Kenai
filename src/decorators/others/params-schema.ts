@@ -1,14 +1,16 @@
+import { createValidationSchema } from '@builders/validation-schema';
 import ControllerManager from '@managers/controller.manager';
-import { z } from 'zod';
 
-export function ParamsSchema(schema: z.ZodTypeAny) {
+// Types
+import type { z } from 'zod';
+
+export function ParamsSchema(schema: z.ZodTypeAny, omitUnknownKeys: boolean = false) {
     return function (target: object, key: PropertyKey, descriptor: PropertyDescriptor) {
         if (!schema || !Object.keys(schema).length) return descriptor;
 
         new ControllerManager(target.constructor).update(key, {
-            options: {
-                params: schema,
-            },
+            middlewares: [createValidationSchema({ schema, from: 'body', omitUnknownKeys })],
+            options: { params: schema },
         });
 
         return descriptor;

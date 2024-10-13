@@ -4,7 +4,7 @@ import IoRedis, { type RedisOptions } from 'ioredis';
 
 import zlib from 'node:zlib';
 
-export class Redis {
+export class RedisManager {
     private static get _redis() {
         return KenaiGlobal.get('redis') as IoRedis;
     }

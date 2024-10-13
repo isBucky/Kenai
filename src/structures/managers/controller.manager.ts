@@ -50,6 +50,11 @@ export default class ControllerManager {
                 ...controller,
                 ...newValues,
 
+                middlewares: Array.prototype.concat(
+                    controller.middlewares || [],
+                    newValues.middlewares || [],
+                ),
+
                 options: {
                     ...controller.options,
                     ...newValues.options,

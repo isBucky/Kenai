@@ -3,6 +3,7 @@ import '@fastify/swagger';
 
 import { Middlewares } from '@decorators/middlewares';
 import { HandlerMethod } from './method/handler';
+import { RedisManager } from '@managers/redis';
 import { Router } from '@decorators/router';
 import { getMetadata } from '@utils/index';
 
@@ -30,9 +31,7 @@ export const MaoriPlugin = fastifyPlugin(
         if (!routes || !routes.size) return;
 
         if (options.customZodParser) Middlewares.setCustomZodParser(options.customZodParser);
-        // if (options.redis)
-
-        fastify.setValidatorCompiler(() => () => ({ value: true }));
+        if (options.redis) RedisManager.initialize(options.redis);
 
         for (const [, route] of routes.entries()) {
             try {
@@ -67,8 +66,10 @@ export const MaoriPlugin = fastifyPlugin(
                                 : undefined,
                         } as FastifySchema),
 
-                        preValidation: route.middlewares,
+                        validatorCompiler: () => () => ({ value: true }),
+                        serializerCompiler: () => (data) => JSON.stringify(data),
 
+                        preValidation: route.middlewares,
                         onSend: HandlerMethod.onSend(route),
 
                         handler: route.handler.bind(

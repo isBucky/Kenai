@@ -1,4 +1,4 @@
-import { Get } from '@decorators/methods';
+import { Get, Post } from '@decorators/methods';
 import {
     BodySchema,
     Deprecated,
@@ -16,9 +16,10 @@ import { z } from 'zod';
 
 @Router()
 export default class MainRouter {
+    @BodySchema(z.object({ a: z.string() }))
     @Return(200, z.object({ message: z.string(), cu: z.object({ a: z.boolean() }) }))
-    @Get('/test')
+    @Post('/test')
     run(@Reply() reply: FastifyReply) {
-        return { message: 'Oi', cu: { a: 123 } };
+        return { message: 'Oi', cu: { a: true } };
     }
 }

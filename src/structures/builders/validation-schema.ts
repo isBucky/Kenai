@@ -15,11 +15,12 @@ export function createValidationSchema({
     from,
     ...options
 }: CreateValidationSchemaOptions): FastifyValidation {
-    if (!ValidationFrom[from])
+    if (!(from in ValidationFrom))
         throw new Error(`This ${from} option does not exist to apply schema validation`);
 
     return (request, reply, done) => {
-        if (request[from]) throw new Error(`The ${from} option does not exist in the request data`);
+        if (!(from in request))
+            throw new Error(`The ${from} option does not exist in the request data`);
 
         const customZodParser = KenaiGlobal.get<CustomZodParser>('custom-zod-parser');
         try {

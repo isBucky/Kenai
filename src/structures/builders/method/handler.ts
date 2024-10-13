@@ -1,4 +1,5 @@
 import { KenaiGlobal } from '@managers/kenai-global';
+import { RedisManager } from '@managers/redis';
 import { getMetadata } from '@utils/index';
 
 import { ZodAccelerator } from '@duplojs/zod-accelerator';
@@ -31,13 +32,25 @@ export class HandlerMethod {
         args: Parameters<CallbackOriginalFunction>,
     ) {
         const [request, reply] = args;
-        if (!this.controller.options || !Object.keys(this.controller.options).length)
-            return await callback(...args);
+        const options = this.controller.options;
+
+        if (!options || !Object.keys(options).length) return await callback(...args);
+
+        // Verifying if there are values ​​in the database
+        if (options.cache?.ttl && !options.cache.invalidateOnUpdate) {
+            const cacheData = RedisManager.get(request.url);
+            if (cacheData) return reply.code(200).send(cacheData);
+        }
 
         const value = await callback(...this.resolveCustomParams(args));
 
+        if (options.cache?.invalidateOnUpdate) RedisManager.delete(request.url);
         if (request.socket.closed || reply.sent) return;
         if (!value) return reply.code(204).send();
+
+        // Inserindo os valores no chace
+        if (options.cache?.ttl && !options.cache.invalidateOnUpdate)
+            RedisManager.set(request.url, value, options.cache.ttl);
 
         return reply.code(200).send(value);
     }
@@ -53,17 +66,12 @@ export class HandlerMethod {
             if (['HEAD', 'OPTIONS'].includes(request.method)) return done(null, payload);
 
             const contentType = reply.getHeader('Content-Type') as string;
-
-            console.log(contentType.split(';')[0]);
             if (contentType && contentType.split(';')[0] == 'application/json') {
                 const responseSchema = route.options?.response?.[reply.statusCode];
-
-                console.log(!!responseSchema, reply.statusCode);
                 if (responseSchema) {
                     const payloadParsed = JSON.parse(<string>payload || '');
                     const result = HandlerMethod.parser(responseSchema, payloadParsed);
 
-                    console.log(payloadParsed, result, 'a');
                     return done(null, JSON.stringify(result));
                 }
             }
