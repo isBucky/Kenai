@@ -6,10 +6,10 @@ import { ZodAccelerator } from '@duplojs/zod-accelerator';
 import ObjectManager from 'object.mn';
 
 // Types
-import type { Controllers, ControllerMetadata } from 'types/controllers';
 import type { CustomZodParser } from '@builders/validation-schema';
+import type { ControllerMetadata, Controllers } from './decorator';
+import type { FastifyHandler } from '@decorators/middlewares';
 import type { onSendHookHandler } from 'fastify';
-import type { FastifyHandler } from 'types';
 import type { z } from 'zod';
 
 export class HandlerMethod {

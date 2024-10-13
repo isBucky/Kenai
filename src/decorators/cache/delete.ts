@@ -1,5 +1,4 @@
 import ControllerManager from '@managers/controller.manager';
-import { KenaiGlobal } from '@managers/kenai-global';
 
 /**
  * Use this function to invalidate the caches of your routes. Put

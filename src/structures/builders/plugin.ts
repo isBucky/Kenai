@@ -10,7 +10,7 @@ import { createSchema } from 'zod-openapi';
 import fastifyPlugin from 'fastify-plugin';
 
 // Types
-import type { ControllerMetadata } from 'types/controllers';
+import type { ControllerMetadata } from '@builders/method/decorator';
 import type { CustomZodParser } from './validation-schema';
 import type { FastifySchema, RouteOptions } from 'fastify';
 import type { RedisOptions } from 'ioredis';
@@ -27,7 +27,7 @@ export const MaoriPlugin = fastifyPlugin(
             throw new Error('The informed main route does not have a signature of our decorators.');
 
         const routes = Router.getData(options.mainRoute);
-        if (!routes || !routes.size) return;
+        if (!routes || !routes.size) return done();
 
         if (options.customZodParser) Middlewares.setCustomZodParser(options.customZodParser);
         if (options.redis) RedisManager.initialize(options.redis);
@@ -89,7 +89,7 @@ export const MaoriPlugin = fastifyPlugin(
     },
     {
         name: 'maori',
-        fastify: '4.x',
+        fastify: '5.x',
     },
 );
 

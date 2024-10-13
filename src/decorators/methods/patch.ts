@@ -8,4 +8,4 @@ import { createMethodDecorator } from '@builders/method/decorator';
  *
  * @see {@link https://github.com/isBucky/Kenai?tab=readme-ov-file#methods | Documentation}
  */
-export const Patch = (path: string) => createMethodDecorator('PATCH', path);
+export const Patch = (path?: string) => createMethodDecorator('PATCH', path);

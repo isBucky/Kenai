@@ -1,7 +1,7 @@
 import { getMetadata, Symbols } from '@utils/index';
 
 // Types
-import type { ControllerMetadata, Controllers } from 'types/controllers';
+import type { ControllerMetadata, Controllers } from '@builders/method/decorator';
 
 export default class ControllerManager {
     constructor(public target: Function) {}

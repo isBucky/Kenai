@@ -1,5 +1,4 @@
 import ControllerManager from '@managers/controller.manager';
-import { KenaiGlobal } from '@managers/kenai-global';
 import { InvalidateOnUpdate } from './delete';
 
 /**

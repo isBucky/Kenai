@@ -2,7 +2,7 @@
 import { KenaiGlobal } from '@managers/kenai-global';
 
 // Types
-import type { FastifyValidation } from 'types';
+import type { FastifyValidation } from '@decorators/middlewares';
 import type { z } from 'zod';
 
 /**

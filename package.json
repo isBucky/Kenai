@@ -1,33 +1,18 @@
 {
     "name": "kenai",
-    "version": "1.0.7",
+    "version": "1.0.8",
     "description": "Creation and management of Fastify routes using decorators.",
-    "main": "./dist/index.js",
-    "types": "./dist/index.d.ts",
+    "type": "module",
+    "main": "dist/cjs/index.js",
+    "module": "dist/esm/index.js",
+    "types": "dist/esm/index.d.ts",
     "files": [
-        "./dist/**/*",
-        "*.js",
-        "*.d.ts",
-        "*.md",
-        "LICENSE"
+        "dist"
     ],
-    "exports": {
-        ".": {
-            "default": "./dist/index.js",
-            "types": "./dist/index.d.ts"
-        },
-        "./params": {
-            "default": "./dist/src/decorators/params/index.js",
-            "types": "./dist/src/decorators/params/index.d.ts"
-        },
-        "./methods": {
-            "default": "./dist/src/decorators/methods/index.js",
-            "types": "./dist/src/decorators/methods/index.d.ts"
-        }
-    },
     "scripts": {
-        "build": "rm -rf dist && tsc && tsc-alias -p ./tsconfig.json",
-        "publish": "bun build && npm publish"
+        "build:esm": "tsc && tsc-alias -p tsconfig.json",
+        "build:cjs": "tsc -p tsconfig.cjs.json && tsc-alias -p tsconfig.cjs.json",
+        "build": "rm -rf dist && bun build:esm && bun build:cjs"
     },
     "keywords": [],
     "author": "Bucky <bucky.developer@gmail.com>",
@@ -56,6 +41,7 @@
         "fastify": "^4.28.1",
         "prettier": "^3.3.3",
         "reflect-metadata": "^0.2.2",
+        "tsc-alias": "^1.8.10",
         "typescript": "^5.6.3"
     }
 }

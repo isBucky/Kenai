@@ -1,13 +1,10 @@
-import {
-    createValidationSchema,
-    type CustomZodParser,
-    type CreateValidationSchemaOptions,
-} from '@builders/validation-schema';
 import ControllerManager from '@managers/controller.manager';
 import { KenaiGlobal } from '@managers/kenai-global';
 
 // Types
-import type { FastifyValidation } from 'types';
+import type { preValidationMetaHookHandler } from 'fastify/types/hooks';
+import type { CustomZodParser } from '@builders/validation-schema';
+import type { RouteHandler } from 'fastify';
 
 /**
  * Use this decorator to add middleware to your route
@@ -33,3 +30,6 @@ export function Middlewares(...middlewares: FastifyValidation[]) {
 Middlewares.setCustomZodParser = function setCustomZodParser(parser: CustomZodParser) {
     return KenaiGlobal.set('custom-zod-parser', parser);
 };
+
+export type FastifyHandler = RouteHandler;
+export type FastifyValidation = preValidationMetaHookHandler;

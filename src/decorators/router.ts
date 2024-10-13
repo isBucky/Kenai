@@ -3,8 +3,8 @@ import { getMetadata, Symbols } from '@utils/index';
 import { resolvePath } from '@utils/resolve-path';
 
 // Types
-import type { ControllerMetadata, Controllers } from 'types/controllers';
-import type { RouterOptions, RouterStructure } from 'types/router';
+import type { ControllerMetadata, Controllers } from '@builders/method/decorator';
+import type { FastifyValidation } from './middlewares';
 
 /**
  * Use this decorator to create a route manager
@@ -18,7 +18,7 @@ export function Router(...args: RouterParams) {
     const { url, options } = ResolveRouterParams(...args);
 
     return function (target: RouterTarget) {
-        const controllersInTarget = getMetadata<Controllers>('controllers', target);
+        const controllersInTarget = getMetadata<Controllers>('controllers', target) ?? new Map();
         const routes = new Map<string, ControllerMetadata>();
 
         // Checking if there are controllers in the Router class
@@ -75,3 +75,22 @@ Router.getData = function GetData(target: new (...args: any[]) => any) {
 export type RouterTarget = new (...args: any[]) => object;
 
 export type RouterParams = [url?: string | RouterOptions, options?: RouterOptions];
+
+export interface RouterOptions {
+    /**
+     * Controllers responsible for this route
+     */
+    controllers?: (new (...args: any[]) => unknown)[];
+
+    /**
+     * All routes defined in this router will have automatically defined middlewares
+     */
+    middlewares?: FastifyValidation[];
+
+    /**
+     * Use to make a list of other routes with the current
+     */
+    routers?: (new (...args: any[]) => unknown)[];
+}
+
+export type RouterStructure = Map<string, ControllerMetadata>;
