@@ -1,14 +1,11 @@
 import MainRouter from './routes/index.routes';
-import { LoadRoutes } from 'kenai';
+import { MaoriPlugin } from '../../index';
 import fastify from 'fastify';
 
 const app = fastify({
     ignoreTrailingSlash: true,
 });
 
-LoadRoutes({
-    app,
-    mainRoute: MainRouter,
-}).then(() => {
-    app.listen({ port: 3000 }, () => console.log('on'));
-});
+app.register(MaoriPlugin, {});
+
+app.listen({ port: 3000 }, () => console.log('on'));

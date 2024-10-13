@@ -10,12 +10,7 @@ import { InvalidateOnUpdate } from './delete';
  */
 export function Cache(ttl?: number) {
     return function (target: object, key: string, descriptor: PropertyDescriptor) {
-        const controllerManager = new ControllerManager(target.constructor);
-        const controller = controllerManager.get(key);
-
-        if (!controller || !KenaiGlobal.has('redis')) return descriptor;
-
-        controllerManager.update(key, {
+        new ControllerManager(target.constructor).update(key, {
             options: {
                 cache: {
                     ttl: ttl ?? 5 * 60,

@@ -38,19 +38,37 @@ export class HandlerMethod {
 
         // Verifying if there are values ​​in the database
         if (options.cache?.ttl && !options.cache.invalidateOnUpdate) {
-            const cacheData = RedisManager.get(request.url);
-            if (cacheData) return reply.code(200).send(cacheData);
+            if (!KenaiGlobal.has('redis'))
+                console.error(
+                    new Error('No Redis connection was defined to use cache on the routes'),
+                );
+            else {
+                const cacheData = await RedisManager.get(request.url);
+                if (cacheData) return reply.code(200).send(cacheData);
+            }
         }
 
         const value = await callback(...this.resolveCustomParams(args));
 
-        if (options.cache?.invalidateOnUpdate) RedisManager.delete(request.url);
+        if (options.cache?.invalidateOnUpdate) {
+            if (!KenaiGlobal.has('redis'))
+                console.error(
+                    new Error('No Redis connection was defined to use cache on the routes'),
+                );
+            else RedisManager.delete(request.url);
+        }
+
         if (request.socket.closed || reply.sent) return;
         if (!value) return reply.code(204).send();
 
         // Inserindo os valores no chace
-        if (options.cache?.ttl && !options.cache.invalidateOnUpdate)
-            RedisManager.set(request.url, value, options.cache.ttl);
+        if (options.cache?.ttl && !options.cache.invalidateOnUpdate) {
+            if (!KenaiGlobal.has('redis'))
+                console.error(
+                    new Error('No Redis connection was defined to use cache on the routes'),
+                );
+            else RedisManager.set(request.url, value, options.cache.ttl);
+        }
 
         return reply.code(200).send(value);
     }

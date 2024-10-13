@@ -14,8 +14,8 @@ import fastifyPlugin from 'fastify-plugin';
 import type { ControllerMetadata } from 'types/controllers';
 import type { CustomZodParser } from './validation-schema';
 import type { FastifySchema, RouteOptions } from 'fastify';
-import type { ContentType } from '@decorators/others';
 import type Redis from 'ioredis';
+import { RedisOptions } from 'ioredis';
 
 /**
  * Plugin responsible for loading the decorator routes
@@ -97,15 +97,10 @@ export const MaoriPlugin = fastifyPlugin(
 function makeResponse(route: ControllerMetadata) {
     if (!route?.options?.response) return;
     return Object.fromEntries(
-        Object.entries(route.options!.response!).map(([status, schema]) => {
-            const typeName = schema._def['typeName'];
-            let type: keyof typeof ContentType;
-
-            if (typeName == 'ZodObject') type = 'application/json';
-            if (typeName == 'ZodString') type = 'text/plain';
-
-            return [status, createSchema(schema).schema];
-        }),
+        Object.entries(route.options!.response!).map(([status, schema]) => [
+            status,
+            createSchema(schema).schema,
+        ]),
     );
 }
 
@@ -126,11 +121,18 @@ export interface PluginOptions {
     mainRoute: new (...args: any[]) => any;
 
     /**
-     * This option is used to define the parameters of all routes
+     * Here you can define the parameters for the class that controllers were created
      */
     controllerParameters?: any[];
 
+    /**
+     * Here you can define a custom parser for validations, such as generating
+     * modified messages or modified errors
+     */
     customZodParser?: CustomZodParser;
 
-    redis?: Redis;
+    /**
+     * Use to define a connection with Redis to use as a cache
+     */
+    redis?: RedisOptions | Redis | string;
 }

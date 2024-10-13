@@ -1,4 +1,4 @@
-import { createMethodDecorator, type MethodDecoratorParams } from '@builders/method/decorator';
+import { createMethodDecorator } from '@builders/method/decorator';
 
 /**
  * Use this decorator to create a Delete route
@@ -8,4 +8,4 @@ import { createMethodDecorator, type MethodDecoratorParams } from '@builders/met
  *
  * @see {@link https://github.com/isBucky/Kenai?tab=readme-ov-file#methods | Documentation}
  */
-export const Delete = (...args: MethodDecoratorParams) => createMethodDecorator('DELETE', ...args);
+export const Delete = (path: string) => createMethodDecorator('DELETE', path);

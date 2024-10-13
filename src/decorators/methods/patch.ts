@@ -1,4 +1,4 @@
-import { createMethodDecorator, type MethodDecoratorParams } from '@builders/method/decorator';
+import { createMethodDecorator } from '@builders/method/decorator';
 
 /**
  * Use this decorator to create a route of type Patch
@@ -8,4 +8,4 @@ import { createMethodDecorator, type MethodDecoratorParams } from '@builders/met
  *
  * @see {@link https://github.com/isBucky/Kenai?tab=readme-ov-file#methods | Documentation}
  */
-export const Patch = (...args: MethodDecoratorParams) => createMethodDecorator('PATCH', ...args);
+export const Patch = (path: string) => createMethodDecorator('PATCH', path);

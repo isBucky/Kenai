@@ -18,7 +18,6 @@ export class RedisManager {
      */
     public static initialize(options: RedisOptions | IoRedis | string) {
         if (options instanceof IoRedis) return KenaiGlobal.set('redis', options);
-
         return KenaiGlobal.set('redis', new IoRedis(<any>options));
     }
 

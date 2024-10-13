@@ -1,4 +1,4 @@
-import { createMethodDecorator, type MethodDecoratorParams } from '@builders/method/decorator';
+import { createMethodDecorator } from '@builders/method/decorator';
 
 /**
  * Use this decorator to create a Get route
@@ -8,4 +8,4 @@ import { createMethodDecorator, type MethodDecoratorParams } from '@builders/met
  *
  * @see {@link https://github.com/isBucky/Kenai?tab=readme-ov-file#methods | Documentation}
  */
-export const Get = (...args: MethodDecoratorParams) => createMethodDecorator('GET', ...args);
+export const Get = (path: string) => createMethodDecorator('GET', path);
