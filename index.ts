@@ -1,10 +1,7 @@
 import 'reflect-metadata';
 
-export * from './src/methods/';
-export * from './src/params/';
+export * as Methods from '@decorators/methods';
+export * as Params from '@decorators/params';
 
-export { LoadRoutes, createParamDecorator } from './src/functions/';
-export * from './src/metadata';
-export * from './src/router';
-export * from './src/cache/';
-export * from './src/docs';
+export * from './src/decorators';
+export * from '@builders/plugin';

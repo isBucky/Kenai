@@ -1,0 +1,104 @@
+import { KenaiGlobal } from '@managers/kenai-global';
+import { getMetadata } from '@utils/index';
+
+import { ZodAccelerator } from '@duplojs/zod-accelerator';
+import ObjectManager from 'object.mn';
+
+// Types
+import type { Controllers, ControllerMetadata } from 'types/controllers';
+import type { CustomZodParser } from '@builders/validation-schema';
+import type { onSendHookHandler } from 'fastify';
+import type { FastifyHandler } from 'types';
+import type { z } from 'zod';
+
+export class HandlerMethod {
+    public controller: ControllerMetadata;
+
+    constructor(
+        public target: Function,
+        public key: PropertyKey,
+    ) {
+        this.controller = getMetadata<Controllers>('controllers', target).get(key)!;
+    }
+
+    /**
+     *
+     * @param callback
+     * @param args
+     */
+    public async run(
+        callback: CallbackOriginalFunction,
+        args: Parameters<CallbackOriginalFunction>,
+    ) {
+        const [request, reply] = args;
+        if (!this.controller.options || !Object.keys(this.controller.options).length)
+            return await callback(...args);
+
+        const value = await callback(...this.resolveCustomParams(args));
+
+        if (request.socket.closed || reply.sent) return;
+        if (!value) return reply.code(204).send();
+
+        return reply.code(200).send(value);
+    }
+
+    /**
+     * This function is used when the route sends a message, so I can check the returned data
+     *
+     * @param route Controller data
+     */
+    public static onSend(route: ControllerMetadata): onSendHookHandler {
+        return function (request, reply, payload, done) {
+            if (reply.statusCode == 204 || !payload || !payload?.['length']) return done();
+            if (['HEAD', 'OPTIONS'].includes(request.method)) return done(null, payload);
+
+            const contentType = reply.getHeader('Content-Type') as string;
+
+            console.log(contentType.split(';')[0]);
+            if (contentType && contentType.split(';')[0] == 'application/json') {
+                const responseSchema = route.options?.response?.[reply.statusCode];
+
+                console.log(!!responseSchema, reply.statusCode);
+                if (responseSchema) {
+                    const payloadParsed = JSON.parse(<string>payload || '');
+                    const result = HandlerMethod.parser(responseSchema, payloadParsed);
+
+                    console.log(payloadParsed, result, 'a');
+                    return done(null, JSON.stringify(result));
+                }
+            }
+
+            return done(null, payload);
+        };
+    }
+
+    /**
+     * Use this function to create the response validation
+     *
+     * @param schema schemaDoZod
+     * @param value Value to be valid
+     */
+    private static parser(schema: z.ZodTypeAny, value: unknown) {
+        const customZodParser = KenaiGlobal.get<CustomZodParser>('custom-zod-parser');
+
+        if (customZodParser) return customZodParser(schema, value);
+        return ZodAccelerator.build(schema).parse(value);
+    }
+
+    /**
+     * Use this function to solve custom parameters for the controller handler
+     *
+     * @param args Handler parameters
+     */
+    private resolveCustomParams(args: Parameters<CallbackOriginalFunction>) {
+        const customParams = this.controller.customHandlerParams;
+        if (!customParams || !customParams.length) return args;
+
+        const [request, reply] = args;
+        const data = new ObjectManager({ request, reply });
+
+        return <[any, any]>customParams.map((param) => data.get(param));
+    }
+}
+
+export type CallbackOriginalFunction = (...args: Parameters<FastifyHandler>) => unknown;

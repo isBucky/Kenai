@@ -1,9 +1,0 @@
-node_modules
-dist
-postman
-package.json
-tsconfig.json
-
-.*
-*.yaml
-*.md

@@ -17,49 +17,45 @@
             "types": "./dist/index.d.ts"
         },
         "./params": {
-            "default": "./dist/src/params/index.js",
-            "types": "./dist/src/params/index.d.ts"
+            "default": "./dist/src/decorators/params/index.js",
+            "types": "./dist/src/decorators/params/index.d.ts"
         },
         "./methods": {
-            "default": "./dist/src/methods/index.js",
-            "types": "./dist/src/methods/index.d.ts"
+            "default": "./dist/src/decorators/methods/index.js",
+            "types": "./dist/src/decorators/methods/index.d.ts"
         }
     },
     "scripts": {
-        "dev": "rm -rf ./dist && tsc && node --trace-warnings --watch ./dist/test.js",
-        "build": "rm -rf dist && tsc",
-        "publi": "pnpm build && npm publish"
+        "build": "rm -rf dist && tsc && tsc-alias -p ./tsconfig.json",
+        "publish": "bun build && npm publish"
     },
     "keywords": [],
     "author": "Bucky <bucky.developer@gmail.com>",
     "license": "MIT",
-    "engines": {
-        "node": ">=16.6.0",
-        "npm": ">=7.0.0"
-    },
     "peerDependencies": {
         "reflect-metadata": "*"
     },
-    "devDependencies": {
-        "@types/eslint-plugin-prettier": "^3.1.3",
-        "@types/node": "^20.12.7",
-        "@types/try-catch": "^3.0.2",
-        "@typescript-eslint/eslint-plugin": "^7.7.1",
-        "@typescript-eslint/parser": "^7.7.1",
-        "eslint": "^9.1.1",
-        "eslint-config-prettier": "^9.1.0",
-        "eslint-plugin-prettier": "^5.1.3",
-        "fastify": "^4.26.2",
-        "prettier": "^3.2.5",
-        "reflect-metadata": "^0.2.2",
-        "ts-node": "^10.9.2",
-        "typescript": "^5.4.5"
-    },
     "dependencies": {
+        "@duplojs/zod-accelerator": "^2.4.0",
         "bucky.js": "^1.2.1",
+        "fastify-plugin": "^5.0.1",
         "ioredis": "^5.4.1",
         "object.mn": "^1.2.6",
-        "try-catch": "^3.0.1",
-        "zod": "^3.23.4"
+        "zod": "^3.23.8",
+        "zod-openapi": "^3.1.1"
+    },
+    "devDependencies": {
+        "@fastify/swagger": "^9.2.0",
+        "@types/eslint-plugin-prettier": "^3.1.3",
+        "@types/node": "^20.16.11",
+        "@typescript-eslint/eslint-plugin": "^7.18.0",
+        "@typescript-eslint/parser": "^7.18.0",
+        "eslint": "^9.12.0",
+        "eslint-config-prettier": "^9.1.0",
+        "eslint-plugin-prettier": "^5.2.1",
+        "fastify": "^4.28.1",
+        "prettier": "^3.3.3",
+        "reflect-metadata": "^0.2.2",
+        "typescript": "^5.6.3"
     }
 }
