@@ -104,7 +104,7 @@ export class HandlerMethod {
      * @param schema schemaDoZod
      * @param value Value to be valid
      */
-    private static parser(schema: z.ZodTypeAny, value: unknown) {
+    public static parser(schema: z.ZodTypeAny, value: unknown) {
         const customZodParser = KenaiGlobal.get<CustomZodParser>('custom-zod-parser');
 
         if (customZodParser) return customZodParser(schema, value);

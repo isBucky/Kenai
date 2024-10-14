@@ -4,6 +4,7 @@ import { KenaiGlobal } from '@managers/kenai-global';
 // Types
 import type { FastifyValidation } from '@decorators/middlewares';
 import type { z } from 'zod';
+import { HandlerMethod } from './method/handler';
 
 /**
  * Use this function to create validations with Zod Schema
@@ -22,13 +23,9 @@ export function createValidationSchema({
         if (!(from in request))
             throw new Error(`The ${from} option does not exist in the request data`);
 
-        const customZodParser = KenaiGlobal.get<CustomZodParser>('custom-zod-parser');
         try {
-            if (customZodParser) customZodParser(schema, request[from]);
-            else {
-                const data = schema.parse(request[from]);
-                if (from !== 'params' && !options?.omitUnknownKeys) request[from] = data;
-            }
+            const data = HandlerMethod.parser(schema, request[from]);
+            if (from !== 'params' && options?.omitUnknownKeys !== false) request[from] = data;
 
             return done();
         } catch (error: any) {

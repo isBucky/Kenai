@@ -65,7 +65,7 @@ export const MaoriPlugin = fastifyPlugin(
                                 : undefined,
                         } as FastifySchema),
 
-                        validatorCompiler: () => () => ({ value: true }),
+                        validatorCompiler: () => (data) => ({ value: data }),
                         serializerCompiler: () => (data) => JSON.stringify(data),
 
                         preValidation: route.middlewares,
