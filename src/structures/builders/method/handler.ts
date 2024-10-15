@@ -98,11 +98,21 @@ export class HandlerMethod {
                     // Parse the payload to a JSON object
                     const payloadParsed = JSON.parse(<string>payload || '');
 
-                    // Validate the payload with the Zod schema
-                    const result = HandlerMethod.parser(responseSchema.zod, payloadParsed);
+                    try {
+                        // Validate the payload with the Zod schema
+                        const result = HandlerMethod.parser(responseSchema.zod, payloadParsed);
 
-                    // Return the validated payload as a JSON string
-                    return done(null, JSON.stringify(result));
+                        // Return the validated payload as a JSON string
+                        return done(null, JSON.stringify(result));
+                    } catch (error: any) {
+                        error = new Error('An error occurred while validating the response', {
+                            cause: error,
+                        });
+
+                        error.isResponseError = true;
+
+                        throw error;
+                    }
                 }
             }
 

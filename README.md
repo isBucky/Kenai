@@ -9,10 +9,6 @@
   </p>
 </div>
 
-# Languages
-
--   [**Portuguese**](README.pt-BR.md)
-
 # Table of content
 
 -   [**Installation**](#installation)
@@ -63,12 +59,12 @@ Before we start using the decorators, we need to configure **Kenai** as a **Fast
 
 | Option                 | Description                                                                | Mandatory |
 | ---------------------- | -------------------------------------------------------------------------- | --------- |
-| `mainRouter`           | Defines the main route of the Fastify                                      | Yes       |
+| `routers`              | Used to define new routes from this endpoint                               | Yes       |
 | `zodCustomParser`      | Define a custom parser for Zod errors                                      | No        |
 | `redis`                | Defines the Redis configuration for routes with cache                      | No        |
 | `controllerParameters` | Defines the parameters for the controller class, such as the server itself | No        |
 
-**Exemplo de como configurar o plugin:**
+**Example of how to configure the plugin:**
 
 ```typescript
 import MainRouter from './routers/';
@@ -115,9 +111,9 @@ export default class MainRouter {
 }
 ```
 
-**Criando rotas e controladores externos:**
+**Creating external routes and controllers:**
 
-> Os controladores são definidos a partir dos decorators [**Methods**](#methods)
+> Controllers are defined using the [**Methods**](#methods) decorators
 
 ```typescript
 import { Router, Get } from 'kenai';
@@ -129,7 +125,7 @@ class HelloWorldController {
     }
 }
 
-// Rota externa porem interligadas, url final: /v1/hello-world
+// External route but interconnected, final url: /v1/hello-world
 @Router('/hello-world', {
     controllers: [HelloWorldController]
 });
@@ -241,7 +237,7 @@ This decorator defines all possible returns of the request, defining the status 
 | Option   | Description                             | Required |
 | -------- | --------------------------------------- | -------- |
 | `status` | Defines the status of the response      | Yes      |
-| `schema` | Defines the validation schema using zod | Yes      |
+| `schema` | Defines the validation schema using zod | No      |
 
 **Example of how to use Returns:**
 
@@ -251,6 +247,7 @@ import { z } from 'zod';
 
 class MainRouter {
     @Returns(200, z.object({ name: z.string().min(1) }))
+    @Returns(201)
     @Get()
     run() {
         return { name: 'Kenai' };

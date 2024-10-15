@@ -8,7 +8,7 @@ import ControllerManager from '@managers/controller.manager';
  * 
  * @see {@link https://github.com/isBucky/Kenai?tab=readme-ov-file#tags | Documentation}
  */
-export function Tags(tags: string[]) {
+export function Tags(...tags: string[]) {
     return function (target: object, key: PropertyKey, descriptor: PropertyDescriptor) {
         if (!tags || !tags.length) return descriptor;
 
