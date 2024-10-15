@@ -28,7 +28,7 @@ export function Returns(status: HttpCodes, schema?: z.ZodTypeAny) {
                         },
 
                         get json() {
-                            if (!schema) return;
+                            if (!schema) return {};
                             return createSchema(schema).schema;
                         },
                     },
