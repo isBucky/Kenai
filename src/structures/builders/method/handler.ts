@@ -14,6 +14,10 @@ import type { z } from 'zod';
 export class HandlerMethod {
     public controller: ControllerMetadata;
 
+    /**
+     * @param target The target class that owns this method.
+     * @param key The key of the method in the target class.
+     */
     constructor(
         public target: Function,
         public key: PropertyKey,
@@ -76,23 +80,33 @@ export class HandlerMethod {
      * This function is used when the route sends a message, so I can check the returned data
      *
      * @param route Controller data
+     * @returns Hook for Fastify `onSend` event
      */
     public static onSend(route: ControllerMetadata): onSendHookHandler {
         return function (request, reply, payload, done) {
             if (reply.statusCode == 204 || !payload || !payload?.['length']) return done();
             if (['HEAD', 'OPTIONS'].includes(request.method)) return done(null, payload);
 
+            // Get the content type of the response
             const contentType = reply.getHeader('Content-Type') as string;
+
+            // If the content type is JSON, parse the payload and validate it with the Zod schema
             if (contentType && contentType.split(';')[0] == 'application/json') {
                 const responseSchema = route.options?.response?.[reply.statusCode];
-                if (responseSchema) {
-                    const payloadParsed = JSON.parse(<string>payload || '');
-                    const result = HandlerMethod.parser(responseSchema, payloadParsed);
 
+                if (responseSchema && responseSchema.zod) {
+                    // Parse the payload to a JSON object
+                    const payloadParsed = JSON.parse(<string>payload || '');
+
+                    // Validate the payload with the Zod schema
+                    const result = HandlerMethod.parser(responseSchema.zod, payloadParsed);
+
+                    // Return the validated payload as a JSON string
                     return done(null, JSON.stringify(result));
                 }
             }
 
+            // Return the payload as is if it's not a JSON response
             return done(null, payload);
         };
     }
@@ -100,13 +114,22 @@ export class HandlerMethod {
     /**
      * Use this function to create the response validation
      *
-     * @param schema schemaDoZod
+     * @param schema Zod schema
      * @param value Value to be valid
+     * @returns Validated value
      */
-    public static parser(schema: z.ZodTypeAny, value: unknown) {
+    public static parser(schema: z.ZodTypeAny, value: unknown): unknown {
+        /**
+         * Check if the global customZodParser is defined
+         * and use it to validate the value if it exists
+         */
         const customZodParser = KenaiGlobal.get<CustomZodParser>('custom-zod-parser');
-
         if (customZodParser) return customZodParser(schema, value);
+
+        /**
+         * If there is no custom parser, use the default Zod parse
+         * to validate the value
+         */
         return schema.parse(value);
     }
 

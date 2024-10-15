@@ -21,19 +21,26 @@ import type Redis from 'ioredis';
  */
 export const KenaiPlugin = fastifyPlugin(
     function KenaiPlugin(fastify, options: PluginOptions, done) {
+        // If the user does not inform a main route, throw an error
         if (!options.mainRoute) throw new Error('You did not define a main route.');
 
+        // Check if the main route is a class with the kenai router decorator
         if (!isClass(options.mainRoute) || !getMetadata('router', options.mainRoute))
             throw new Error('The informed main route does not have a signature of our decorators.');
 
+        // Get all routes from the main route
         const routes = Router.getData(options.mainRoute);
         if (!routes || !routes.size) return done();
 
+        // If the user inform a custom Zod parser, set it
         if (options.customZodParser) Middlewares.setCustomZodParser(options.customZodParser);
+        // If the user inform Redis options, initialize it
         if (options.redis) RedisManager.initialize(options.redis);
 
+        // Loop through all routes and create a new route for each one
         for (const [, route] of routes.entries()) {
             try {
+                // Create the route with the options informed by the user
                 fastify.route(
                     removeUndefinedProperties({
                         ...route.options?.fastifyRouteOptions,
@@ -42,6 +49,8 @@ export const KenaiPlugin = fastifyPlugin(
                         method: route.method,
 
                         schema: removeUndefinedProperties({
+                            ...route.options?.fastifyRouteOptions?.schema,
+
                             description: route.options?.description,
                             summary: route.options?.summary,
                             operationId: route.options?.operationId,
@@ -54,19 +63,9 @@ export const KenaiPlugin = fastifyPlugin(
 
                             response: makeResponse(route),
 
-                            body: route.options?.body
-                                ? !['GET', 'HEAD'].includes(route.method)
-                                    ? createSchema(route.options?.body).schema
-                                    : undefined
-                                : undefined,
-
-                            params: route.options?.params
-                                ? createSchema(route.options.params).schema
-                                : undefined,
-
-                            querystring: route.options?.querystring
-                                ? createSchema(route.options.querystring).schema
-                                : undefined,
+                            body: route.options?.body?.json,
+                            params: route.options?.params?.json,
+                            querystring: route.options?.querystring?.json,
                         } as FastifySchema),
 
                         validatorCompiler: () => (data) => ({ value: data }),
@@ -83,6 +82,7 @@ export const KenaiPlugin = fastifyPlugin(
                     } as RouteOptions),
                 );
             } catch (error: any) {
+                // If an error occurs, add the route to the error and throw it
                 error.route = route;
 
                 throw error;
@@ -97,22 +97,44 @@ export const KenaiPlugin = fastifyPlugin(
     },
 );
 
+/**
+ * Creates a response object for a route, using the response from the route
+ * options, and transforming it into a format that Fastify can understand.
+ *
+ * @param route The route metadata
+ * @returns The response object
+ */
 function makeResponse(route: ControllerMetadata) {
     if (!route?.options?.response) return;
+
     return Object.fromEntries(
-        Object.entries(route.options!.response!).map(([status, schema]) => [
-            status,
-            createSchema(schema).schema,
-        ]),
+        Object.entries(route.options!.response!).map(([status, { json }]) => [status, json]),
     );
 }
 
+/**
+ * Removes all properties from an object which have an undefined value.
+ *
+ * @example
+ * const input = { a: 1, b: undefined, c: 3 };
+ * const output = removeUndefinedProperties(input);
+ * // output is { a: 1, c: 3 }
+ *
+ * @param data The object to remove undefined properties from
+ * @returns The object with all undefined properties removed
+ */
 function removeUndefinedProperties<T extends object>(data: T): T {
     return Object.fromEntries(
         Object.entries(data).filter(([_, value]) => value !== undefined),
     ) as T;
 }
 
+/**
+ * Checks if the given value is a class (i.e. a function with a prototype).
+ *
+ * @param route The value to check
+ * @returns True if the value is a class, false otherwise
+ */
 function isClass(route: PluginOptions['mainRoute']) {
     return typeof route === 'function' && typeof route.prototype !== 'undefined';
 }

@@ -1,5 +1,6 @@
 import { createValidationSchema } from '@builders/validation-schema';
 import ControllerManager from '@managers/controller.manager';
+import { createSchema } from 'zod-openapi';
 
 // Types
 import type { z } from 'zod';
@@ -22,7 +23,17 @@ export function ParamsSchema(schema: z.ZodTypeAny) {
             middlewares: [
                 createValidationSchema({ schema, from: 'params', omitUnknownKeys: false }),
             ],
-            options: { params: schema },
+            options: {
+                params: {
+                    get zod() {
+                        return schema;
+                    },
+
+                    get json() {
+                        return createSchema(schema).schema;
+                    },
+                }
+            },
         });
 
         return descriptor;

@@ -4,7 +4,7 @@ import { HandlerMethod } from './handler';
 
 // Types
 import type { FastifyHandler, FastifyValidation } from '@decorators/middlewares';
-import type { QuerySchema } from '@decorators/others';
+import type { HttpCodes, QuerySchema } from '@decorators/others';
 import type { RouteShorthandOptions } from 'fastify';
 import type { z } from 'zod';
 
@@ -158,23 +158,23 @@ export interface ControllerOptions {
     /**
      * Specify the schema of the request body
      */
-    body?: z.ZodTypeAny;
+    body?: ZodAndJson;
 
     /**
      * Specify the schema of the querystring
      */
-    querystring?: Parameters<typeof QuerySchema>[0];
+    querystring?: ZodAndJson;
 
     /**
      * Specify the schema of the route params
      */
-    params?: z.ZodTypeAny;
+    params?: ZodAndJson;
 
     /**
      * Specify the response schema for each status code
      */
     response?: {
-        [status: number]: z.ZodTypeAny;
+        [code: number]: Partial<ZodAndJson>;
     };
 
     /**
@@ -197,4 +197,21 @@ export interface ControllerOptions {
          */
         invalidateOnUpdate?: boolean;
     };
+}
+
+/**
+ * Interface used to represent the return of the
+ * {@link createSchema} function, which returns a Zod schema
+ * and a JSON representation of the same schema.
+ */
+export interface ZodAndJson {
+    /**
+     * Zod schema
+     */
+    zod: z.ZodTypeAny;
+
+    /**
+     * JSON representation of the Zod schema
+     */
+    json: object;
 }

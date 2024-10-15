@@ -1,5 +1,6 @@
 import { createValidationSchema } from '@builders/validation-schema';
 import ControllerManager from '@managers/controller.manager';
+import { createSchema } from 'zod-openapi';
 
 // Types
 import type { z } from 'zod';
@@ -20,7 +21,17 @@ export function QuerySchema(schema: z.ZodTypeAny, omitUnknownKeys: boolean = fal
 
         new ControllerManager(target.constructor).update(key, {
             middlewares: [createValidationSchema({ schema, from: 'query', omitUnknownKeys })],
-            options: { querystring: schema },
+            options: {
+                querystring: {
+                    get zod() {
+                        return schema;
+                    },
+
+                    get json() {
+                        return createSchema(schema).schema;
+                    },
+                }
+            },
         });
 
         return descriptor;

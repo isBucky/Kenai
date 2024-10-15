@@ -1,4 +1,5 @@
 import ControllerManager from '@managers/controller.manager';
+import { createSchema } from 'zod-openapi';
 
 // Types
 import type { z } from 'zod';
@@ -10,10 +11,10 @@ import type { z } from 'zod';
  *
  * @param status The status of the response
  * @param schema The schema of the response
- * 
+ *
  * @see {@link https://github.com/isBucky/Kenai?tab=readme-ov-file#returns | Documentation}
  */
-export function Returns(status: HttpCodes, schema: z.ZodTypeAny) {
+export function Returns(status: HttpCodes, schema?: z.ZodTypeAny) {
     return function (target: object, key: PropertyKey, descriptor: PropertyDescriptor) {
         if (!status || status < 100 || status > 599)
             throw new Error('You did not provide a valid request status');
@@ -21,7 +22,16 @@ export function Returns(status: HttpCodes, schema: z.ZodTypeAny) {
         new ControllerManager(target.constructor).update(key, {
             options: {
                 response: {
-                    [status]: schema,
+                    [status]: {
+                        get zod() {
+                            return schema;
+                        },
+
+                        get json() {
+                            if (!schema) return;
+                            return createSchema(schema).schema;
+                        },
+                    },
                 },
             },
         });
