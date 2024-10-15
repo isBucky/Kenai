@@ -5,6 +5,6 @@ import { createParamsDecorator } from '@builders/params';
  *
  * @param key Name of the parameter you want to get
  *
- * @see {@link https://github.com/isBucky/Kenai?tab=readme-ov-file#params | Documentation}
+ * @see {@link https://github.com/isBucky/Kenai?tab=readme-ov-file#headers | Documentation}
  */
 export const Headers = (key?: string) => createParamsDecorator('request/headers', key);

@@ -2,7 +2,6 @@ import { KenaiGlobal } from '@managers/kenai-global';
 import { RedisManager } from '@managers/redis';
 import { getMetadata } from '@utils/index';
 
-import { ZodAccelerator } from '@duplojs/zod-accelerator';
 import ObjectManager from 'object.mn';
 
 // Types
@@ -108,7 +107,7 @@ export class HandlerMethod {
         const customZodParser = KenaiGlobal.get<CustomZodParser>('custom-zod-parser');
 
         if (customZodParser) return customZodParser(schema, value);
-        return ZodAccelerator.build(schema).parse(value);
+        return schema.parse(value);
     }
 
     /**

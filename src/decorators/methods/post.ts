@@ -1,11 +1,11 @@
-import { createMethodDecorator } from '@builders/method/decorator';
+import { createMethodDecorator, MethodDecoratorParams } from '@builders/method/decorator';
 
 /**
- * Use this decorator to create a Post type route
+ * Use this decorator to create a Post route
  *
  * @param path Route path
- * @param options Route configuration options
+ * @param fastifyRouteOptions Fastify route options
  *
- * @see {@link https://github.com/isBucky/Kenai?tab=readme-ov-file#methods | Documentation}
+ * @see {@link https://github.com/isBucky/Kenai?tab=readme-ov-file#post | Documentation}
  */
-export const Post = (path?: string) => createMethodDecorator('POST', path);
+export const Post = (...args: MethodDecoratorParams) => createMethodDecorator('POST', ...args);

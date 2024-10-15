@@ -10,6 +10,8 @@ import type { RouteHandler } from 'fastify';
  * Use this decorator to add middleware to your route
  *
  * @param Middlewares Middlewares for the route
+ * 
+ * @see {@link https://github.com/isBucky/Kenai?tab=readme-ov-file#middlewares | Documentation}
  */
 export function Middlewares(...middlewares: FastifyValidation[]) {
     return function (target: object, key: PropertyKey, descriptor: PropertyDescriptor) {

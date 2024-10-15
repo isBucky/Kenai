@@ -4,15 +4,24 @@ import { HandlerMethod } from './handler';
 
 // Types
 import type { FastifyHandler, FastifyValidation } from '@decorators/middlewares';
-import type { Methods } from '@utils/index';
+import type { QuerySchema } from '@decorators/others';
+import type { RouteShorthandOptions } from 'fastify';
 import type { z } from 'zod';
 
 /**
- * Use this function to create a decorator for the request methods
+ * Function used to create a decorator for a controller method
  *
- * @param method Method that will be created
+ * @param method Method type (GET, POST, PUT, DELETE, PATCH, OPTIONS)
+ * @param url Path to create the route
+ * @param fastifyRouteOptions Fastify route options
+ *
+ * @return A decorator function
  */
-export function createMethodDecorator(method: Methods, url: string = '/') {
+export function createMethodDecorator(
+    method: Methods,
+    url: string = '/',
+    fastifyRouteOptions?: RouteShorthandOptions,
+) {
     return function (target: object, key: PropertyKey, descriptor: PropertyDescriptor) {
         const controllerManager = new ControllerManager(target.constructor);
         const originalFunction: Function = descriptor.value;
@@ -37,11 +46,19 @@ export function createMethodDecorator(method: Methods, url: string = '/') {
             handler: descriptor.value,
             constructorController: <any>target.constructor,
             key,
+
+            options: {
+                fastifyRouteOptions,
+            },
         });
 
         return descriptor;
     };
 }
+
+export type MethodDecoratorParams = [path?: string, options?: RouteShorthandOptions];
+
+export type Methods = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
 export type Controllers = Map<PropertyKey, ControllerMetadata>;
 
@@ -88,21 +105,74 @@ export interface ControllerMetadata {
 }
 
 export interface ControllerOptions {
+    /**
+     * Fastify route options
+     */
+    fastifyRouteOptions?: RouteShorthandOptions;
+
+    /**
+     * Optional description of the route
+     */
     description?: string;
+
+    /**
+     * Optional summary of the route
+     */
     summary?: string;
+
+    /**
+     * Optional tags for the route
+     */
     tags?: string[];
+
+    /**
+     * Optional operationId for the route
+     */
     operationId?: string;
 
+    /**
+     * Specify the MIME types of the request body
+     */
     consumes?: string[];
+
+    /**
+     * Specify the MIME types of the response body
+     */
     produces?: string[];
+
+    /**
+     * Specify security requirements for the route
+     */
     security?: Record<string, string[]>;
+
+    /**
+     * Specify if the route is deprecated
+     */
     deprecated?: boolean;
+
+    /**
+     * Specify if the route should be hidden from documentation
+     */
     hide?: boolean;
 
+    /**
+     * Specify the schema of the request body
+     */
     body?: z.ZodTypeAny;
-    querystring?: z.ZodTypeAny;
+
+    /**
+     * Specify the schema of the querystring
+     */
+    querystring?: Parameters<typeof QuerySchema>[0];
+
+    /**
+     * Specify the schema of the route params
+     */
     params?: z.ZodTypeAny;
 
+    /**
+     * Specify the response schema for each status code
+     */
     response?: {
         [status: number]: z.ZodTypeAny;
     };
@@ -112,7 +182,7 @@ export interface ControllerOptions {
      */
     cache?: {
         /**
-         * Use to define how long the data will remain in cache
+         * Use to define how long the data will remain in cache (in seconds)
          *
          * @default 5 minutes
          */

@@ -19,8 +19,8 @@ import type Redis from 'ioredis';
 /**
  * Plugin responsible for loading the decorator routes
  */
-export const MaoriPlugin = fastifyPlugin(
-    function MaoriPlugin(fastify, options: PluginOptions, done) {
+export const KenaiPlugin = fastifyPlugin(
+    function KenaiPlugin(fastify, options: PluginOptions, done) {
         if (!options.mainRoute) throw new Error('You did not define a main route.');
 
         if (!isClass(options.mainRoute) || !getMetadata('router', options.mainRoute))
@@ -36,6 +36,8 @@ export const MaoriPlugin = fastifyPlugin(
             try {
                 fastify.route(
                     removeUndefinedProperties({
+                        ...route.options?.fastifyRouteOptions,
+
                         url: route.url,
                         method: route.method,
 
@@ -57,9 +59,11 @@ export const MaoriPlugin = fastifyPlugin(
                                     ? createSchema(route.options?.body).schema
                                     : undefined
                                 : undefined,
+
                             params: route.options?.params
                                 ? createSchema(route.options.params).schema
                                 : undefined,
+
                             querystring: route.options?.querystring
                                 ? createSchema(route.options.querystring).schema
                                 : undefined,

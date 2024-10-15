@@ -3,7 +3,17 @@ import ControllerManager from '@managers/controller.manager';
 // Types
 import type { z } from 'zod';
 
-export function Return(status: HttpCodes, schema: z.ZodTypeAny) {
+/**
+ * This decorator is responsible for declaring what a route returns,
+ * besides declaring what is returned, it also validates the output
+ * of the response.
+ *
+ * @param status The status of the response
+ * @param schema The schema of the response
+ * 
+ * @see {@link https://github.com/isBucky/Kenai?tab=readme-ov-file#returns | Documentation}
+ */
+export function Returns(status: HttpCodes, schema: z.ZodTypeAny) {
     return function (target: object, key: PropertyKey, descriptor: PropertyDescriptor) {
         if (!status || status < 100 || status > 599)
             throw new Error('You did not provide a valid request status');

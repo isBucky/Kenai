@@ -10,4 +10,4 @@ export * from './operation-id';
 export * from './summary';
 export * from './tags';
 export * from './security';
-export * from './return';
+export * from './returns';

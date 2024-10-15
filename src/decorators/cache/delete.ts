@@ -6,6 +6,8 @@ import ControllerManager from '@managers/controller.manager';
  * stored in the cache. When calling this function, any new request
  * on the route to update or remove data will result in the removal of the
  * Cache, ensuring that the values ​​are always up to date.
+ *
+ * @see {@link https://github.com/isBucky/Kenai?tab=readme-ov-file#cacheinvalidateonupdate | Documentation}
  */
 export function InvalidateOnUpdate() {
     return function (target: object, key: string, descriptor: PropertyDescriptor) {

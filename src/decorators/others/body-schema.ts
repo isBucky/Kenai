@@ -4,6 +4,15 @@ import ControllerManager from '@managers/controller.manager';
 // Types
 import type { z } from 'zod';
 
+/**
+ * Decorator to set the request body validation schema
+ *
+ * @param schema The zod schema to validate the request body
+ * @param omitUnknownKeys If true, the validator will remove extraneous keys from the object
+ * @returns A function that accepts the target object and the key of the method being decorated
+ * 
+ * @see {@link https://github.com/isBucky/Kenai?tab=readme-ov-file#bodyschema | Documentation}
+ */
 export function BodySchema(schema: z.ZodTypeAny, omitUnknownKeys: boolean = false) {
     return function (target: object, key: PropertyKey, descriptor: PropertyDescriptor) {
         if (!schema || !Object.keys(schema).length) return descriptor;

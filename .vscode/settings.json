@@ -1,5 +1,5 @@
 {
     "typescript.tsdk": "node_modules/typescript/lib",
     "commentTranslate.source": "Google",
-    "commentTranslate.targetLanguage": "en"
+    "commentTranslate.targetLanguage": "pt"
 }

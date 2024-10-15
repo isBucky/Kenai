@@ -9,544 +9,723 @@
   </p>
 </div>
 
+# Languages
+
+-   [**Portuguese**](README.pt-BR.md)
+
 # Table of content
 
-- [**Installation**](#installation)
-- [**First steps**](#first-steps)
-- [**LoadRoutes**](#loadroutes)
-- [**Router**](#router)
-- [**Docs**](#docs)
-- [**Metadata**](#metadata)
-- [**Cache**](#cache)
-    - [**Cache.delete**](#cachedelete)
-    - [**Cache.initialize**](#cacheinitialize)
-- [**Methods**](#methods)
-- [**Params**](#params)
-- [**Extra**](#extra)
-    - [**Controllers**](#controllers)
-    - [**Validations**](#validations)
-    - [**Create decorators for parameters**](#create-decorators-for-parameters)
-
+-   [**Installation**](#installation)
+-   [**First steps**](#first-steps)
+-   [**Decorators**](#decorators)
+    -   [**Router**](#router)
+    -   [**Middlewares**](#middlewares)
+    -   [**BodySchema**](#bodyschema)
+    -   [**QuerySchema**](#queryschema)
+    -   [**ParamsSchema**](#paramsschema)
+    -   [**Returns**](#returns)
+    -   [**Methods**](#methods)
+        -   [**Get**](#get)
+        -   [**Post**](#post)
+        -   [**Put**](#put)
+        -   [**Patch**](#patch)
+        -   [**Delete**](#delete)
+    -   [**Params**](#params)
+        -   [**Reply**](#reply)
+        -   [**Request**](#request)
+        -   [**Params**](#params-1)
+        -   [**Body**](#body)
+        -   [**Query**](#query)
+        -   [**Headers**](#headers)
+    -   [**Cache**](#cache)
+        -   [**Cache**](#cache-1)
+        -   [**Cache.InvalidateOnUpdate**](#cacheinvalidateonupdate)
+    -   [**OpenAPI**](#openapi)
+        -   [**Description**](#description)
+        -   [**Summary**](#summary)
+        -   [**Tags**](#tags)
+        -   [**Consumes**](#consumes)
+        -   [**Security**](#security)
+        -   [**OperationId**](#operationid)
+        -   [**Deprecated**](#deprecated)
+        -   [**Hide**](#hide)
+-   [**Extra**](#extra)
 
 # Installation
 
-NPM:
 ```powershell
 npm install kenai
 ```
 
-Yarn:
-```powershell
-yarn add kenai
-```
-
-Pnpm:
-```powershell
-pnpm add kenai
-```
-
 # First steps
 
-Below is an example of how to use decorators to create your routes, the creation of routes **is based on the main route** and for **every sub-route there must be a main route**, just like the route `/users` must belong to the `/` route (main) and each route can have **controllers in separate folders** as in the [**Click here**](https://github.com/isBucky/Kenai/tree/main/examples/several-routes) example, thus **not polluting your code** creating several functions in a route class.
+Before we start using the decorators, we need to configure **Kenai** as a **Fastify** plugin. Below are the plugin configuration options:
 
-> **Note** To learn more about these features read [LoadRoutes](#loadroutes) and [Router](#router).
+| Option                 | Description                                                                | Mandatory |
+| ---------------------- | -------------------------------------------------------------------------- | --------- |
+| `mainRouter`           | Defines the main route of the Fastify                                      | Yes       |
+| `zodCustomParser`      | Define a custom parser for Zod errors                                      | No        |
+| `redis`                | Defines the Redis configuration for routes with cache                      | No        |
+| `controllerParameters` | Defines the parameters for the controller class, such as the server itself | No        |
 
-**Single route example:**
+**Exemplo de como configurar o plugin:**
+
 ```typescript
-import { Router, LoadRoutes, Get } from 'kenai';
+import MainRouter from './routers/';
+import { KenaiPlugin } from 'kenai';
 import fastify from 'fastify';
 
-const app = fastify();
+const app = fastify({ ignoreTrailingSlash: true });
 
-@Router()
-class FirstRouter {
+app.register(KenaiPlugin, { mainRoute: MainRouter });
+
+app.listen({ port: 3000 }, (err, address) => {
+    if (err) throw err;
+    console.log(`Server listening at ${address}`);
+});
+```
+
+# Decorators
+
+## Router
+
+This decorator is responsible for creating routes in Fastify, allowing you to define middlewares, new routes, and controllers in a single call.
+
+External routes defined inside the decorator body are automatically integrated, dynamically associating their URLs with the 'child' routes and this also applies to middlewares.
+
+**Configuration options:**
+
+| Option        | Description                                                | Mandatory |
+| ------------- | ---------------------------------------------------------- | --------- |
+| `routers`     | Used to define new routes from this endpoint               | Yes       |
+| `middlewares` | Responsible for adding middleware to routes for validation | No        |
+| `controllers` | Responsible for adding controllers to routes               | Yes       |
+
+**Below is an example of how to create a route:**
+
+```typescript
+import { Router, Get } from 'kenai';
+
+@Router('/hello-world')
+export default class MainRouter {
     @Get()
-    GetRouter() {
-        return {
-            message: 'Hello World!',
-        };
+    helloWorld() {
+        return 'Hello World!';
+    }
+}
+```
+
+**Criando rotas e controladores externos:**
+
+> Os controladores são definidos a partir dos decorators [**Methods**](#methods)
+
+```typescript
+import { Router, Get } from 'kenai';
+
+class HelloWorldController {
+    @Get()
+    helloWorld() {
+        return 'Hello World!';
     }
 }
 
-LoadRoutes({
-    app,
-    mainRoute: FirstRouter,
-}).then((routes) => {
-    if (!routes) return console.log('No routes to carry');
-
-    app.listen({ port: 3000 }, () => console.log('on'));
+// Rota externa porem interligadas, url final: /v1/hello-world
+@Router('/hello-world', {
+    controllers: [HelloWorldController]
 });
+class HelloWorldRouter {}
+
+@Router('/v1', {
+    routers: [HelloWorldRouter],
+})
+export default class MainRouter {}
 ```
 
+## Middlewares
 
-# LoadRoutes
+The middlewares are responsible for validating the requests, **being invoked before the main processing** and executed afterwards.
 
-You must use this function to load all routes created by decorators.
+**Example of how to create a middleware:**
 
-**Parameters:**
+> You can add **more than one** middleware, just separate them with a comma.
 
 ```typescript
-{
-    /**
-     * Fastify application instance
-     */
-    app: FastifyInstance;
+function ContentTypeValidator(request, reply, done) {
+    if (request.headers['Content-Type'] !== 'application/json')
+        throw new Error('Não aceito esse tipo de conteúdo');
 
-    /**
-     * Main route of your application
-     */
-    mainRoute?: new (...args: any[]) => any;
-
-    /**
-     * This option is used to define the parameters of all routes
-     */
-    controllerParameters?: any[];
+    return done();
 }
-```
 
-**Example:**
-
-```typescript
-LoadRoutes({
-    app: FastifyApp,
-    mainRoute: MainRoute,
-    controllerParameters: ['foo', 'bar']
-});
-```
-
-# Router
-
-Use this decorator to create new routes on the Fastify server.
-
-**Parameters:**
-
-```typescript
-Router(pathRouter?: string | RouterOptions, optionsRoute?: RouterOptions)
-```
-
-- **pathRouter:** Path that the route will be created. It's not mandatory. Default: `\`.
-
-- **optionsRoute:**
-  > **Note** Learn more about [Controllers](#controllers) and [Validations](#validations).
-
-    ```typescript
-    {
-        /**
-         * Controllers responsible for this route
-         */
-        controllers?: (new (...args: any[]) => unknown)[];
-    
-        /**
-         * All routes defined in this router will have automatically defined validations
-         */
-        validations?: Validation[];
-    
-        /**
-         * Use to make a list of other routes with the current
-         */
-        routes?: (new (...args: any[]) => unknown)[];
+@Router('/')
+class MainRouter {
+    @Middleware(ContentTypeValidator)
+    @Get()
+    helloWorld() {
+        return 'Hello World!';
     }
-    ```
-
-**Example:**
-
-```typescript
-@Router('/users', {
-    controllers: [GetUsers, Register],
-    validations: [UserValidation],
-    routes: [OtherRoute]
-})
-class MyRoute {}
-
-// Or
-
-@Router({
-    controllers: [GetUsers, Register],
-    validations: [UserValidation],
-    routes: [OtherRoute]
-})
-class MyRoute {}
-```
-
-# Docs
-
-Use this route to define an object containing information about the route, so you can create custom docs.
-
-**Parameters:**
-
-```typescript
-{
-    path: string;
-    method: string;
-
-    description?: string;
-    consumes?: string[];
-    permissions?: string[];
-    security?: string[];
-    tag?: string;
-
-    request?: {
-        query?: object;
-        body?: any;
-    };
-
-    responses?: {
-        status?: number;
-        produce?: string;
-        content?: any;
-    }[];
 }
 ```
 
-**Example:**
+## BodySchema
+
+This decorator is responsible for validating all data sent to the request body, using [Zod](https://github.com/colinhacks/zod) as a validation schema.
+
+| Option            | Description                                                                      | Required |
+| ----------------- | -------------------------------------------------------------------------------- | -------- |
+| `schema`          | Defines the validation schema using zod                                          | Yes      |
+| `omitUnknownKeys` | Defines whether the validator should remove keys that do not exist in the schema | No       |
+
+**Example of how to use BodySchema:**
 
 ```typescript
-class MyController {
-    @Docs({
-        path: '/',
-        method: 'get',
-    
-        description: 'Description',
-        consumes: ['application/json'],
-        permissions: ['admin'],
-        tag: ['main'],
-    })
+import { BodySchema, Post } from 'kenai';
+import { z } from 'zod';
+
+class MainRouter {
+    @BodySchema(z.object({ name: z.string().min(1) }))
+    @Post()
+    run(request) {}
+}
+```
+
+## QuerySchema
+
+This decorator is responsible for validating all data sent in the request URL, using [Zod](https://github.com/colinhacks/zod) as a validation schema.
+
+> The schema created in zod must have all properties as optional, otherwise it will create errors for values that were not informed.
+
+| Option            | Description                                                                      | Required |
+| ----------------- | -------------------------------------------------------------------------------- | -------- |
+| `schema`          | Defines the validation schema using zod                                          | Yes      |
+| `omitUnknownKeys` | Defines whether the validator should remove keys that do not exist in the schema | No       |
+
+**Example of how to use QuerySchema:**
+
+```typescript
+import { QuerySchema, Get } from 'kenai';
+import { z } from 'zod';
+
+class MainRouter {
+    @QuerySchema(z.object({ name: z.string().min(1).optional() }))
     @Get()
-    myHandler() {}
+    run(request) {}
 }
 ```
 
+## ParamsSchema
 
-# Metadata
+This decorator is responsible for validating all parameters passed in the Url of the request, using the [Zod](https://github.com/colinhacks/zod) as a validation schema.
 
-Use this decorator to define preferred values for the route.
+| Option   | Description                             | Required |
+| -------- | --------------------------------------- | -------- |
+| `schema` | Defines the validation schema using zod | Yes      |
 
-**Parameters:**
-
-The parameter value can be anything to be set.
-
-**Example:**
+**Example of how to use the ParamsSchema:**
 
 ```typescript
-class MyController {
-    @Metadata({
-        foo: 'bar',
-    })
+import { ParamsSchema, Get } from 'kenai';
+import { z } from 'zod';
+
+class MainRouter {
+    @ParamsSchema(z.object({ name: z.string().min(1) }))
     @Get()
-    myHandler() {}
+    run(request) {}
 }
 ```
 
-# Cache
+## Returns
 
-Use this decorator to create cache in routes, with it the request time will be more **efficient** and can be used for **static values**, or **dynamic values** with an expiration.
+This decorator defines all possible returns of the request, defining the status and body of the response using [Zod](https://github.com/colinhacks/zod) as validation for the output.
 
-With it you can store it in **memory** or **Redis** database, to use Redis as a cache check the function: [**Initialize**](#cacheinitialize).
+| Option   | Description                             | Required |
+| -------- | --------------------------------------- | -------- |
+| `status` | Defines the status of the response      | Yes      |
+| `schema` | Defines the validation schema using zod | Yes      |
 
-> **Note** The paths for creating values in Redis are based on the route URL.
-> 
-> If a null value is returned, it will be ignored.
-
-**Parameters:**
+**Example of how to use Returns:**
 
 ```typescript
-{
-    /**
-     * Define which storage should use
-     * 
-     * @default memory
-     */
-    cacheIn: 'memory' | 'redis';
+import { Returns, Get } from 'kenai';
+import { z } from 'zod';
 
-    /**
-     * Set how long this value will expire and become obsolete
-     */
-    ttl?: number;
+class MainRouter {
+    @Returns(200, z.object({ name: z.string().min(1) }))
+    @Get()
+    run() {
+        return { name: 'Kenai' };
+    }
 }
 ```
 
-**Example:**
+## Methods
 
-```typescript
-class MyController {
-    @Cache({
-        cacheIn: 'memory',
-        ttl: 120 // 2 minutes
-    })
-    @Get('/user/:id')
-    myHandler() {}
-}
-```
+The methods are responsible for creating the route controllers.
 
-## Cache.delete
+**All methods accept the same parameters:**
 
-Use this function for a given route that deletes/updates values, this will automatically remove the data saved in cache, if I have a route that saves it to reuse it, thus updating it every time it is changed.
+| Option                | Description                                                                                       | Required |
+| --------------------- | ------------------------------------------------------------------------------------------------- | -------- |
+| `path`                | Defines the route path                                                                            | Yes      |
+| `fastifyRouteOptions` | Defines [Fastify route options](https://fastify.dev/docs/latest/Reference/Routes/#routes-options) | No       |
 
-> **Note** It doesn't necessarily have to be a delete/update route, use as you think the data should be updated as it changes.
+### Get
 
-**Example:**
+This decorator is responsible for creating a controller for a [GET](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/GET) route.
 
-```typescript
-class MyController {
-    @Cache.Delete('memory') // 'memory' | 'redis'
-    @Put('user/:id')
-    myHandler() {}
-}
-```
-
-## Cache.initialize
-
-With this function you can initiate a connection with Redis, or just define the already connected Redis body.
-
-> **Note** HE IS NOT A DECORATOR. Use this function before the server comes online.
-
-**Example:**
-
-```typescript
-Cache.initialize('redis://user:root@localhost:6379');
-
-// Or
-
-Cache.initialize({
-    username: 'user',
-    password: 'root',
-    host: 'localhost',
-    port: 6379,
-});
-
-// Or
-
-const redis = new Redis('redis://user:root@localhost:6379');
-
-Cache.initialize(redis);
-```
-
-# Methods
-
-Use these decorators to create a new path for your route, thus assuming a [**Controller**](#controllers) role.
-
-The existing methods are: **Delete**, **Get**, **Patch**, **Post** and **Put**.
-
-**Parameters:**
-
-An available option is called [**validations**](#validations), which allows you to set validations for the route endpoint. This makes it possible to carry out checks even before the data reaches the final function to be processed.
-
-> **Note** All method decorators have the same parameter values.
-
-```typescript
-{
-    /**
-     * Use to set the request response status
-     *
-     * @default 200 = OK
-     */
-    status?: number | keyof typeof Status;
-
-    /**
-     * Use to define a request response validation scheme using zod
-     */
-    replySchema?: {
-        /**
-         * Scheme to validate the response
-         */
-        schema: any;
-
-        /**
-         * If you want it to not remove extraneous keys from the object, set it to false
-         *
-         * @default false
-         */
-        omitUnknownKeys?: boolean;
-    };
-
-    /**
-     * Use to set route validations
-     */
-    validations?: Validation[];
-}
-```
-
-**Example:**
+**Example of how to use Get:**
 
 ```typescript
 import { Get } from 'kenai';
-//Or
-import { Get } from 'kenai';
 
-class MyController {
-    @Get('/user/:id', {
-        validations: [IsValidId],
-    })
-    myHandler() {}
+class MainRouter {
+    @Get('/hello-world')
+    helloWorld() {
+        return 'Hello World!';
+    }
 }
 ```
 
-# Params
+### Post
 
-The decorators **Reply**, **Body**, **Headers**, **Params**, **Query** and **Request** are responsible for bringing values from the request body, below you will find a description of each decorator.
+This decorator is responsible for creating a controller for a [POST](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST) route.
 
-- **Reply**: Gets the request response body.
-- **Body**: Obtains the data sent in this request.
-- **Headers**: Gets the request header.
-- **Params**: Gets the parameters provided in the route URL.
-- **Query**: Gets the values of a query provided in the URL.
-- **Request**: Gets the body of the request
-
-**Parameters:**
-
-You can use the `key` parameter to get a specific value in the request body.
+**Example of how to use Post:**
 
 ```typescript
-Params(key?: string)
+import { Post } from 'kenai';
+
+class MainRouter {
+    @Post('/hello-world')
+    helloWorld() {
+        return 'Hello World!';
+    }
+}
 ```
 
-**Example:**
+### Put
+
+This decorator is responsible for creating a controller for a [PUT](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/PUT) route.
+
+**Example of how to use Put:**
 
 ```typescript
-import { Get, Params } from 'kenai';
-// Or
-import { Params } from 'kenai/params';
+import { Put } from 'kenai';
 
-class MyController {
-    @Get('user/:id')
-    myHandler(@Params('id') userId: string) {
-        return userId;
+class MainRouter {
+    @Put('/hello-world')
+    helloWorld() {
+        return 'Hello World!';
+    }
+}
+```
+
+### Patch
+
+This decorator is responsible for creating a controller for a [PATCH](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/PATCH) route.
+
+**Example of how to use Patch:**
+
+```typescript
+import { Patch } from 'kenai';
+
+class MainRouter {
+    @Patch('/hello-world')
+    helloWorld() {
+        return 'Hello World!';
+    }
+}
+```
+
+### Delete
+
+This decorator is responsible for creating a controller for a [DELETE](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/DELETE) route.
+
+**Example of how to use Delete:**
+
+```typescript
+import { Delete } from 'kenai';
+
+class MainRouter {
+    @Delete('/hello-world')
+    helloWorld() {
+        return 'Hello World!';
+    }
+}
+```
+
+## Params
+
+The 'params' are responsible for creating custom parameters in the route handler.
+
+**All 'params' accept these same parameters:**
+
+| Option | Description                                            | Mandatory |
+| ------ | ------------------------------------------------------ | --------- |
+| `key`  | Name of some value that can be obtained in that object | Yes       |
+
+### Reply
+
+This decorator returns the entire response body.
+
+**Example of how to use Reply:**
+
+```typescript
+import { Reply, Post } from 'kenai';
+
+class MainRouter {
+    @Post('/hello-world')
+    helloWorld(@Reply() reply: FastifyReply) {
+        return reply.code(401).send('Unauthorized');
+    }
+}
+
+// Getting values within the request body
+
+class MainRouter {
+    @Post('/hello-world')
+    helloWorld(@Reply('statusCode') statusCode: number) {
+        return statusCode;
+    }
+}
+```
+
+### Request
+
+This decorator returns the entire request object.
+
+**Example of how to use Request:**
+
+```typescript
+import { Request, Post } from 'kenai';
+
+class MainRouter {
+    @Post('/hello-world')
+    helloWorld(@Request() request: FastifyRequest) {
+        return request;
+    }
+}
+
+// Getting values within the request body
+
+class MainRouter {
+    @Post('/hello-world')
+    helloWorld(@Request('body') body: any) {
+        return body;
+    }
+}
+```
+
+### Params
+
+This decorator returns all parameters of the request.
+
+**Example of how to use the Params:**
+
+```typescript
+import { Params, Post } from 'kenai';
+
+class MainRouter {
+    @Post('/hello-world/:name')
+    helloWorld(@Params() params: Record<string, string>) {
+        return params;
+    }
+}
+```
+
+### Body
+
+This decorator returns the entire request body.
+
+**Example of how to use Body:**
+
+```typescript
+import { Body, Post } from 'kenai';
+
+class MainRouter {
+    @Post('/hello-world')
+    helloWorld(@Body() body: any) {
+        return body;
+    }
+}
+```
+
+### Query
+
+This decorator returns all query parameters of the request.
+
+**Example of how to use the Query:**
+
+```typescript
+import { Query, Post } from 'kenai';
+
+class MainRouter {
+    @Post('/hello-world')
+    helloWorld(@Query() query: Record<string, string>) {
+        return query;
+    }
+}
+```
+
+### Headers
+
+This decorator returns all request headers.
+
+**Example of how to use the Headers:**
+
+```typescript
+import { Headers, Post } from 'kenai';
+
+class MainRouter {
+    @Post('/hello-world')
+    helloWorld(@Headers() headers: Record<string, string>) {
+        return headers;
+    }
+}
+```
+
+## Cache
+
+### Cache
+
+This decorator allows you to store the result of a route in cache. This means that, when a request is made to this route, the results are stored in the cache and reused in the next request, thus saving response time.
+
+> To enable the caching system, you must establish a connection with Redis in the Kenai configuration options (Plugin).
+
+| Option | Description                                             | Required |
+| ------ | ------------------------------------------------------- | -------- |
+| `time` | Time in seconds that the result will be stored in cache | Yes      |
+
+**Example of how to use the Cache:**
+
+```typescript
+import { Cache, Get } from 'kenai';
+
+class MainRouter {
+    @Get('/hello-world')
+    @Cache(60)
+    helloWorld() {
+        return 'Hello World!';
+    }
+}
+```
+
+### Cache.InvalidateOnUpdate
+
+This decorator allows you to invalidate the cache of a route whenever the stored content is updated. This means that, when calling the route, the corresponding cache will be automatically invalidated, ensuring that the next request returns updated data.
+
+For example, I have a route that fetches all users from the database and another that updates a specific user. When I update a user, I want the cache to be invalidated so that I can have the updated data in the next request.
+
+**Example of how to use the Cache.InvalidateOnUpdate:**
+
+```typescript
+import { Cache, Get } from 'kenai';
+
+class MainRouter {
+    @Post('/hello-world')
+    @Cache.InvalidateOnUpdate()
+    helloWorld() {
+        return 'Hello World!';
+    }
+}
+```
+
+## OpenAPI
+
+The decorators in this category are responsible for describing routes, automatically generating documentation with [Swagger](https://www.npmjs.com/package/@fastify/swagger-ui) from these descriptions.
+
+Decorators such as [BodySchema](#bodyschema), [ParamsSchema](#paramsschema), [QuerySchema](#queryschema), and [Returns](#returns) accept [Zod](https://github.com/colinhacks/zod) as a validation schema. This allows you to define detailed descriptions for values using the `describe` function, or create complete specifications with the [zod-to-openapi](https://github.com/samchungy/zod-openapi) package.
+
+### Description
+
+This decorator defines a description about the route.
+
+| Option        | Description         | Required |
+| ------------- | ------------------- | -------- |
+| `description` | Describes the route | Yes      |
+
+**Example of how to use the Description:**
+
+```typescript
+import { Description, Get } from 'kenai';
+
+class MainRouter {
+    @Get('/hello-world')
+    @Description('Hello World!')
+    helloWorld() {
+        return 'Hello World!';
+    }
+}
+```
+
+### Summary
+
+This decorator defines a summary about the route.
+
+| Option    | Description   | Required |
+| --------- | ------------- | -------- |
+| `summary` | Route summary | Yes      |
+
+**Example of how to use the Summary:**
+
+```typescript
+import { Summary, Get } from 'kenai';
+
+class MainRouter {
+    @Get('/hello-world')
+    @Summary('Hello World!')
+    helloWorld() {
+        return 'Hello World!';
+    }
+}
+```
+
+### Tags
+
+This decorator defines tags for the route. Tags are very useful for organizing routes into logical categories, making the API documentation easier to understand and navigate.
+
+| Option | Description | Required |
+| ------ | ----------- | -------- |
+| `tags` | Route tags  | Yes      |
+
+**Example of how to use the Tags:**
+
+```typescript
+import { Tags, Get } from 'kenai';
+
+class MainRouter {
+    @Get('/hello-world')
+    @Tags('Hello World')
+    helloWorld() {
+        return 'Hello World!';
+    }
+}
+```
+
+### Consumes
+
+This decorator defines which types of content can be sent in the request. It is useful for specifying if the route only accepts `application/json`, for example.
+
+| Option     | Description            | Required |
+| ---------- | ---------------------- | -------- |
+| `consumes` | Accepted content types | Yes      |
+
+**Example of how to use the Consumes:**
+
+```typescript
+import { Consumes, Post } from 'kenai';
+
+class MainRouter {
+    @Post('/hello-world')
+    @Consumes(['application/json'])
+    helloWorld() {
+        return 'Hello World!';
+    }
+}
+```
+
+### Security
+
+This decorator defines which securities should be used to protect the route. It is useful for specifying if the route needs authentication, for example.
+
+| Option     | Description      | Required |
+| ---------- | ---------------- | -------- |
+| `security` | Route securities | Yes      |
+
+**Example of how to use the Security:**
+
+```typescript
+import { Security, Post } from 'kenai';
+
+class MainRouter {
+    @Post('/hello-world')
+    @Security({ apiKey: [] })
+    helloWorld() {
+        return 'Hello World!';
+    }
+}
+```
+
+### OperationId
+
+This decorator defines the name of an operation. It is useful for defining different names for operations in the same controller.
+
+| Option        | Description    | Required |
+| ------------- | -------------- | -------- |
+| `operationId` | Operation name | Yes      |
+
+**Example of how to use the OperationId:**
+
+```typescript
+import { OperationId, Get } from 'kenai';
+
+class MainRouter {
+    @Get('/hello-world')
+    @OperationId('helloWorld')
+    helloWorld() {
+        return 'Hello World!';
+    }
+}
+```
+
+### Deprecated
+
+This decorator defines if the route is deprecated. It is useful for marking routes that should not be used in production.
+
+**Example of how to use the Deprecated:**
+
+```typescript
+import { Deprecated, Get } from 'kenai';
+
+class MainRouter {
+    @Get('/hello-world')
+    @Deprecated
+    helloWorld() {
+        return 'Hello World!';
+    }
+}
+```
+
+### Hide
+
+This decorator defines if the route should be hidden. It is useful for marking routes that should not be displayed in the API documentation.
+
+**Example of how to use the Hide:**
+
+```typescript
+import { Hide, Get } from 'kenai';
+
+class MainRouter {
+    @Get('/hello-world')
+    @Hide
+    helloWorld() {
+        return 'Hello World!';
     }
 }
 ```
 
 # Extra
 
-## Controllers
+## createParamsDecorator
 
-**Controllers** are functions or structures responsible for managing a route endpoint. They provide a more readable and easier way to manipulate routes, whether creating new endpoints or updating existing ones.
+Use this function to create decorators for route parameters. For example:
 
-To create controllers in your routes, simply use the [**Methods**](#methods) decorators before any other decorator. If other decorators are defined before it, they will not work, as they must have the controller signature.
-
-**Example:**
-
-```typescript
-// Correct way
-class MyController {
-    @Cache({
-        cacheIn: 'memory'
-    })
-    @Get()
-    myHandler() {
-        return { message: 'Hello!' }
-    }
-}
-
-// Wrong way
-class MyController {
-    @Get()
-    @Cache({
-        cacheIn: 'memory'
-    })
-    myHandler() {
-        return { message: 'Hello!' }
-    }
-}
-```
-
-In the last example, notice that the `Cache` decorator is below `Get`. In this arrangement, it will not work, because, as mentioned previously, decorators that are not [**Methods**](#methods) require a controller signature, which only [**Methods**](#methods) own and create.
-
-## Validations
-
-With the validation functions, it is possible to perform several checks on the data received from a request, making the manipulation of the returned data safe and simple.
-
-Validations can be applied to [**Methods**](#methods), ensuring that the endpoint is only accessed after verification. For each new method created, validations need to be reported again. If you want validations to be applied to multiple controllers, follow the instructions below.
-
-To make validations "global" for multiple controllers, you can define them in the [**Router**](#router) decorator options. This way, all controllers defined in this route will have all validations specified in **Router**.
-
-To return an error if the client sent some wrong information, or was not found, you can choose to use the `reply` response function itself, but I advise you to create a custom error for your project and manage validation errors, in **Fastify** `setErrorHandler` event.
-
-**How to do the validation function:**
+| Option | Description                                       | Required |
+| ------ | ------------------------------------------------- | -------- |
+| `path` | Initial path where the parameter will be obtained | Yes      |
+| `key`  | Property name that you want to obtain             | No       |
 
 ```typescript
-// Structure of a validation function
-type Validation = (
-    request: any,
-    reply: any,
-    done: HookHandlerDoneFunction,
-) => Promise<unknown> | unknown;
+import { createParamsDecorator, Get } from 'kenai';
 
-// Function example
-function validation(request, reply, done) { /* ... */ }
-```
+const Session = (key?: string) => createParamsDecorator('request/session', key);
+// Or
+const IP = createParamsDecorator('request/ip');
 
-**Example of validation in the controller:**
-
-```typescript
-const users = {
-    1: {
-        name: 'Bucky',
-    },
-};
-
-function UserIdIsValid(request, reply, done) {
-    if (!('id' in request.params) || isNaN(Number(request.params.id)))
-        return done(new Error('The ID is malformed or incorrect'));
-
-    if (!users[request.params.id]) return done(new Error('This ID is invalid or does not exist'));
-
-    return done();
-}
-
-class MyController {
-    @Cache({
-        cacheIn: 'memory'
-    })
-    @Get('user/:id', {
-        validations: [UserIdIsValid],
-    })
-    myHandler(@Params('id') userId: string) {
-        return userId;
-    }
-}
-```
-
-**Example of validation on the Router:**
-
-```typescript
-@Router({
-    controllers: [MyController, MyControllerTwo],
-    validations: [UserIdIsValid]
-})
-class MyRouter {}
-```
-
-In this way, as exemplified above, the `MyController` and `MyControllerTwo` controllers will have the same validation of checking the user id, obtaining from the request parameters.
-
-## Create decorators for parameters
-
-You can also create custom decorators for the routes, thus simplifying some tasks for handling the request.
-
-**Parameters:**
-
-```typescript
-createParamDecorator(path: string, key?: string);
-```
-
-- **Path:** Here, you must define which object or data you want to obtain. The path to the desired values should be structured this way, resembling a file path: `request/body` or `request`. This is managed thanks to the [**Object.mn**](https://github.com/isBucky/Object.mn) package.
-
-- **Key:** Use the **`key`** option to get a specific value within this object. This option is optional. Below, there will be two examples: a decorator with the use of `key` and another without, obtaining only the integer value.
-
-**Example:**
-
-```typescript
-import { createParamDecorator } from './';
-
-// Using the "key" parameter
-const User = (key?: string) => createParamDecorator('request/user', key);
-
-// Without the "key" parameter
-const IP = createParamDecorator('request/ip');
-
-class MyController {
-    @Get()
-    myHandler(@User() user: any, @IP ip: string) {
-        return { user, ip };
+export class MainRouter {
+    @Get('/')
+    run(@Session() session: any, @IP ip: string) {
+        return { session, ip };
     }
 }
 ```

@@ -1,5 +1,4 @@
 /* eslint-disable security/detect-object-injection */
-
 /**
  * Use this function to obtain values ​from a constructor
  *
@@ -22,13 +21,3 @@ export function getObjectValue(path: string, data: object): any | undefined {
         .filter(Boolean)
         .reduce((acc, key) => acc?.[key], data);
 }
-
-export enum MethodsEnum {
-    'GET' = 'GET',
-    'POST' = 'POST',
-    'PATCH' = 'PATCH',
-    'DELETE' = 'DELETE',
-    'PUT' = 'PUT',
-}
-
-export type Methods = keyof typeof MethodsEnum | Lowercase<keyof typeof MethodsEnum>;
