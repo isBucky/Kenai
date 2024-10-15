@@ -10,7 +10,7 @@ import type { RouteHandler } from 'fastify';
  * Use this decorator to add middleware to your route
  *
  * @param Middlewares Middlewares for the route
- * 
+ *
  * @see {@link https://github.com/isBucky/Kenai?tab=readme-ov-file#middlewares | Documentation}
  */
 export function Middlewares(...middlewares: FastifyValidation[]) {
@@ -30,7 +30,9 @@ export function Middlewares(...middlewares: FastifyValidation[]) {
  * @param parser Its function of parser
  */
 Middlewares.setCustomZodParser = function setCustomZodParser(parser: CustomZodParser) {
-    return (global[Symbols['global']] ?? {})['custom-zod-parser'] = parser;
+    if (!global[Symbols['global']]) global[Symbols['global']] = {};
+
+    return (global[Symbols['global']]['custom-zod-parser'] = parser);
 };
 
 export type FastifyHandler = RouteHandler;
