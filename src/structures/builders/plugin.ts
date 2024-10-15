@@ -6,7 +6,6 @@ import { RedisManager } from '@managers/redis';
 import { Router } from '@decorators/router';
 import { getMetadata } from '@utils/index';
 
-import { createSchema } from 'zod-openapi';
 import fastifyPlugin from 'fastify-plugin';
 
 // Types

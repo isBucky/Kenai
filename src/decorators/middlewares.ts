@@ -1,5 +1,5 @@
 import ControllerManager from '@managers/controller.manager';
-import { KenaiGlobal } from '@managers/kenai-global';
+import { Symbols } from '@utils/index';
 
 // Types
 import type { preValidationMetaHookHandler } from 'fastify/types/hooks';
@@ -30,7 +30,7 @@ export function Middlewares(...middlewares: FastifyValidation[]) {
  * @param parser Its function of parser
  */
 Middlewares.setCustomZodParser = function setCustomZodParser(parser: CustomZodParser) {
-    return KenaiGlobal.set('custom-zod-parser', parser);
+    return (global[Symbols['global']] ?? {})['custom-zod-parser'] = parser;
 };
 
 export type FastifyHandler = RouteHandler;
