@@ -57,12 +57,13 @@ npm install kenai
 
 Before we start using the decorators, we need to configure **Kenai** as a **Fastify** plugin. Below are the plugin configuration options:
 
-| Option                 | Description                                                                | Mandatory |
-| ---------------------- | -------------------------------------------------------------------------- | --------- |
-| `routers`              | Used to define new routes from this endpoint                               | Yes       |
-| `zodCustomParser`      | Define a custom parser for Zod errors                                      | No        |
-| `redis`                | Defines the Redis configuration for routes with cache                      | No        |
-| `controllerParameters` | Defines the parameters for the controller class, such as the server itself | No        |
+| Option                 | Description                                                                        | Mandatory |
+| ---------------------- | ---------------------------------------------------------------------------------- | --------- |
+| `routers`              | Used to define new routes from this endpoint                                       | Yes       |
+| `zodCustomParser`      | Define a custom parser for Zod errors                                              | No        |
+| `redis`                | Defines the Redis configuration for routes with cache                              | No        |
+| `controllerParameters` | Defines the parameters for the controller class, such as the server itself         | No        |
+| `bufferRedisData`      | Define if Redis data should be stored in a buffer, this helps to save memory space | No        |
 
 **Example of how to configure the plugin:**
 
@@ -237,7 +238,7 @@ This decorator defines all possible returns of the request, defining the status 
 | Option   | Description                             | Required |
 | -------- | --------------------------------------- | -------- |
 | `status` | Defines the status of the response      | Yes      |
-| `schema` | Defines the validation schema using zod | No      |
+| `schema` | Defines the validation schema using zod | No       |
 
 **Example of how to use Returns:**
 

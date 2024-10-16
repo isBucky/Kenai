@@ -13,7 +13,7 @@
         "build:esm": "tsc && tsc-alias -p tsconfig.json",
         "build:cjs": "tsc -p tsconfig.cjs.json && tsc-alias -p tsconfig.cjs.json",
         "build": "rm -rf dist && bun build:esm && bun build:cjs",
-        "publish": "bun run build && npm publish"
+        "publi": "bun run build && npm publish"
     },
     "keywords": [],
     "author": "Bucky <bucky.developer@gmail.com>",

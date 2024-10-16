@@ -5,16 +5,43 @@ import IoRedis, { type RedisOptions } from 'ioredis';
 import zlib from 'node:zlib';
 
 export class RedisManager {
+    private static _prefix = 'kenai:cache:';
+    private static _prefix_buffer = 'kenai:buffer_cache:';
+
+    /**
+     * Return the IoRedis instance.
+     *
+     * @returns IoRedis instance
+     */
     private static get _redis() {
         return KenaiGlobal.get('redis') as IoRedis;
     }
 
-    private static _prefix = 'kenai:cache:';
+    /**
+     * If true, Redis will store data in a buffer,
+     * which can help to reduce memory usage.
+     *
+     * @param value If true, Redis will store data in a buffer
+     * @returns The value of the variable
+     */
+
+    public static setBufferRedisData(value: boolean) {
+        return KenaiGlobal.set('useBufferRedisData', value);
+    }
 
     /**
-     * Use this function to start connecting to redis
+     * Check if Redis is configured to store data in a buffer.
      *
-     * @param options Settings options
+     * @returns If true, Redis is configured to store data in a buffer
+     */
+    private static get useBufferRedisData() {
+        return !!KenaiGlobal.get('useBufferRedisData');
+    }
+
+    /**
+     * Initialize the Redis connection.
+     *
+     * @param options IoRedis instance, Redis connection options or a connection string
      */
     public static initialize(options: RedisOptions | IoRedis | string) {
         if (options instanceof IoRedis) return KenaiGlobal.set('redis', options);
@@ -22,33 +49,53 @@ export class RedisManager {
     }
 
     /**
-     * Use this function to get values ​​saved in redis
+     * Retrieve a value from Redis using a specified path.
      *
-     * @param path Path
+     * @param path The key path to retrieve the value from Redis.
+     * @returns The parsed JSON value if retrieval is successful, otherwise the raw value.
+     * @throws Error if the Redis instance is not initialized.
      */
     public static async get(path: string) {
-        if (!this._redis)
+        if (!this._redis) {
             throw new Error(
                 'You chose to use Redis as a cache, but did not use the Initialize function.',
             );
+        }
 
-        const buffer = await this._redis.getBuffer(this._prefix + path);
-        if (!buffer) return;
+        let value: string;
 
-        const value = zlib.inflateSync(buffer);
+        if (this.useBufferRedisData) {
+            // Retrieve the buffer data from Redis
+            const buffer = await this._redis.getBuffer(this._prefix_buffer + path);
+            if (!buffer) return; // Return undefined if buffer is not found
+
+            // Decompress the buffer data
+            value = zlib.inflateSync(buffer).toString();
+        } else {
+            // Retrieve the cached value as a string
+            const valueCached = await this._redis.get(this._prefix + path);
+            if (!valueCached) return; // Return undefined if value is not found
+
+            value = valueCached;
+        }
+
         try {
-            return JSON.parse(value.toString());
+            // Attempt to parse the retrieved value as JSON
+            return JSON.parse(value);
         } catch (error) {
+            // Return the raw value if JSON parsing fails
             return value;
         }
     }
 
     /**
-     * Use this function to set values ​​in redis
+     * Set a value in Redis with a specified time-to-live (TTL).
      *
-     * @param path Path
-     * @param value Value to be set
-     * @param ttl Time in seconds for the value to expire
+     * @param path The key path to store the value under in Redis.
+     * @param value The value to store in Redis. If the value is not provided, the function will return without setting anything.
+     * @param ttl The time-to-live in seconds for the stored value. Defaults to 5 minutes.
+     *
+     * @throws Error if Redis has not been initialized.
      */
     public static async set(path: string, value: any, ttl: number = 5 * 60) {
         if (!this._redis)
@@ -58,17 +105,21 @@ export class RedisManager {
 
         if (!value) return;
 
-        return await this._redis.setex(
-            this._prefix + path,
-            ttl,
-            zlib.deflateSync(JSON.stringify(value)),
-        );
+        if (this.useBufferRedisData) {
+            const buffer = zlib.deflateSync(JSON.stringify(value));
+
+            return await this._redis.setex(this._prefix_buffer + path, ttl, buffer);
+        } else {
+            return await this._redis.setex(this._prefix + path, ttl, JSON.stringify(value, null, 0));
+        }
     }
 
     /**
-     * Use to delete a value from redis
+     * Deletes a value from Redis.
      *
-     * @param path Path
+     * @param path The key path of the value to delete in Redis.
+     *
+     * @throws Error if Redis has not been initialized.
      */
     public static async delete(path: string) {
         if (!this._redis)
@@ -76,6 +127,8 @@ export class RedisManager {
                 'You chose to use Redis as a cache, but did not use the Initialize function.',
             );
 
-        return await this._redis.del(this._prefix + path).catch(() => null);
+        return await this._redis
+            .del((this.useBufferRedisData ? this._prefix_buffer : this._prefix) + path)
+            .catch(() => null);
     }
 }

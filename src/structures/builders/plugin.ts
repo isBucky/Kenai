@@ -27,6 +27,9 @@ export const KenaiPlugin = fastifyPlugin(
         // If the user inform Redis options, initialize it
         if (options.redis) RedisManager.initialize(options.redis);
 
+        // If the user wants to use Redis as a cache
+        if (options.bufferRedisData !== false) RedisManager.setBufferRedisData(true);
+
         for (const unresolvedRoute of options.routes) {
             if (!isClass(unresolvedRoute))
                 throw new Error('One of the routes informed is not a valid class');
@@ -67,4 +70,14 @@ export interface PluginOptions {
      * Use to define a connection with Redis to use as a cache
      */
     redis?: RedisOptions | Redis | string;
+
+    /**
+     * If true, the data stored in Redis will be buffered,
+     * if false, the data will be stored in plain text.
+     *
+     * @remarks Saving data in buffer in redis saves a considerable amount of memory
+     * 
+     * @default false
+     */
+    bufferRedisData?: boolean;
 }
