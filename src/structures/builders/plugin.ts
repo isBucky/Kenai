@@ -28,7 +28,7 @@ export const KenaiPlugin = fastifyPlugin(
         if (options.redis) RedisManager.initialize(options.redis);
 
         // If the user wants to use Redis as a cache
-        if (options.bufferRedisData !== false) RedisManager.setBufferRedisData(true);
+        if (options.bufferRedisData === true) RedisManager.setBufferRedisData(true);
 
         for (const unresolvedRoute of options.routes) {
             if (!isClass(unresolvedRoute))

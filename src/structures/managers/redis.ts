@@ -35,7 +35,7 @@ export class RedisManager {
      * @returns If true, Redis is configured to store data in a buffer
      */
     private static get useBufferRedisData() {
-        return !!KenaiGlobal.get('useBufferRedisData');
+        return KenaiGlobal.has('useBufferRedisData');
     }
 
     /**
@@ -110,7 +110,11 @@ export class RedisManager {
 
             return await this._redis.setex(this._prefix_buffer + path, ttl, buffer);
         } else {
-            return await this._redis.setex(this._prefix + path, ttl, JSON.stringify(value, null, 0));
+            return await this._redis.setex(
+                this._prefix + path,
+                ttl,
+                JSON.stringify(value, null, 0),
+            );
         }
     }
 
