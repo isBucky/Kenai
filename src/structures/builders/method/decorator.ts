@@ -143,7 +143,7 @@ export interface ControllerOptions {
     /**
      * Specify security requirements for the route
      */
-    security?: Record<string, string[]>;
+    security?: Record<string, string[]>[];
 
     /**
      * Specify if the route is deprecated

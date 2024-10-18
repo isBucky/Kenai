@@ -6,7 +6,7 @@ import ControllerManager from '@managers/controller.manager';
  *
  * @param security - The security of the route
  * @returns A decorator that adds the security to the route
- * 
+ *
  * @see {@link https://github.com/isBucky/Kenai?tab=readme-ov-file#security | Documentation}
  */
 export function Security(security: Record<string, string[]>) {
@@ -15,7 +15,7 @@ export function Security(security: Record<string, string[]>) {
 
         new ControllerManager(target.constructor).update(key, {
             options: {
-                security,
+                security: [security],
             },
         });
 
