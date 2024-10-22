@@ -4,7 +4,6 @@ import { HandlerMethod } from './handler';
 
 // Types
 import type { FastifyHandler, FastifyValidation } from '@decorators/middlewares';
-import type { HttpCodes, QuerySchema } from '@decorators/others';
 import type { RouteShorthandOptions } from 'fastify';
 import type { z } from 'zod';
 
@@ -19,9 +18,16 @@ import type { z } from 'zod';
  */
 export function createMethodDecorator(
     method: Methods,
-    url: string = '/',
+    url?: string | RouteShorthandOptions,
     fastifyRouteOptions?: RouteShorthandOptions,
 ) {
+    if (typeof url !== 'string') {
+        fastifyRouteOptions = url;
+        url = '/';
+    } else {
+        url = '/'
+    }
+
     return function (target: object, key: PropertyKey, descriptor: PropertyDescriptor) {
         const controllerManager = new ControllerManager(target.constructor);
         const originalFunction: Function = descriptor.value;
@@ -56,7 +62,7 @@ export function createMethodDecorator(
     };
 }
 
-export type MethodDecoratorParams = [path?: string, options?: RouteShorthandOptions];
+export type MethodDecoratorParams = [path?: string | RouteShorthandOptions, options?: RouteShorthandOptions];
 
 export type Methods = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 

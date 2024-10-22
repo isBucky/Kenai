@@ -34,6 +34,9 @@ export class HandlerMethod {
         callback: CallbackOriginalFunction,
         args: Parameters<CallbackOriginalFunction>,
     ) {
+        if (this.controller.options?.fastifyRouteOptions?.['websocket'])
+            return await callback(...this.resolveCustomParams(args));
+
         const [request, reply] = args;
         const options = this.controller.options;
 

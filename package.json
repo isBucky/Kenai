@@ -1,6 +1,6 @@
 {
     "name": "kenai",
-    "version": "1.1.9",
+    "version": "1.2.0",
     "description": "Creation and management of Fastify routes using decorators.",
     "type": "module",
     "main": "dist/cjs/index.js",
@@ -13,7 +13,8 @@
         "build:esm": "tsc && tsc-alias -p tsconfig.json",
         "build:cjs": "tsc -p tsconfig.cjs.json && tsc-alias -p tsconfig.cjs.json",
         "build": "rm -rf dist && bun build:esm && bun build:cjs",
-        "publi": "bun run build && npm publish"
+        "publi": "bun run build && npm publish",
+        "pack": "bun run build && npm pack"
     },
     "keywords": [],
     "author": "Bucky <bucky.developer@gmail.com>",
