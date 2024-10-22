@@ -61,7 +61,7 @@ export class HandlerMethod {
             else RedisManager.delete(request.url);
         }
 
-        if (request.socket.closed || reply.sent) return;
+        if (request?.socket?.closed || reply?.sent) return;
         if (!value) return reply.code(204).send();
 
         // Inserindo os valores no chace
