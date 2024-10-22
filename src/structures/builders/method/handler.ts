@@ -156,7 +156,10 @@ export class HandlerMethod {
         if (!customParams || !customParams.length) return args;
 
         const [request, reply] = args;
-        const data = new ObjectManager({ request, reply });
+
+        const data = this.controller.options?.fastifyRouteOptions?.['websocket']
+            ? new ObjectManager({ reply, request })
+            : new ObjectManager({ request, reply });
 
         return <[any, any]>customParams.map((param) => data.get(param));
     }
