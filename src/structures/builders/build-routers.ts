@@ -15,7 +15,11 @@ import type { PluginOptions } from './plugin';
  * @param options.unresolvedRoute - Main route class.
  * @param options.controllerParameters - Parameters to be passed to the controller constructor.
  */
-export function buildRouters({ fastify, unresolvedRoute, controllerParameters }: CreateRoutersOptions) {
+export function buildRouters({
+    fastify,
+    unresolvedRoute,
+    controllerParameters,
+}: CreateRoutersOptions) {
     // Get all routes from the main route
     const routes = Router.getData(unresolvedRoute);
     if (!routes || !routes.size) return;
@@ -50,11 +54,19 @@ export function buildRouters({ fastify, unresolvedRoute, controllerParameters }:
                         querystring: route.options?.querystring?.json,
                     } as FastifySchema),
 
-                    validatorCompiler: () => (data) => ({ value: data }),
-                    serializerCompiler: () => (data) => JSON.stringify(data),
+                    validatorCompiler: !route.options?.fastifyRouteOptions?.['websocket']
+                        ? () => (data) => ({ value: data })
+                        : undefined,
+
+                    serializerCompiler: !route.options?.fastifyRouteOptions?.['websocket']
+                        ? () => (data) => JSON.stringify(data)
+                        : undefined,
 
                     preValidation: route.middlewares,
-                    onSend: HandlerMethod.onSend(route),
+
+                    onSend: !route.options?.fastifyRouteOptions?.['websocket']
+                        ? HandlerMethod.onSend(route)
+                        : undefined,
 
                     handler: route.handler.bind(
                         new route.constructorController(...(controllerParameters || [])),
