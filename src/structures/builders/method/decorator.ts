@@ -24,9 +24,7 @@ export function createMethodDecorator(
     if (typeof url !== 'string') {
         fastifyRouteOptions = url;
         url = '/';
-    } else {
-        url = '/'
-    }
+    } else if (!url.length) url = '/';
 
     return function (target: object, key: PropertyKey, descriptor: PropertyDescriptor) {
         const controllerManager = new ControllerManager(target.constructor);
@@ -62,7 +60,10 @@ export function createMethodDecorator(
     };
 }
 
-export type MethodDecoratorParams = [path?: string | RouteShorthandOptions, options?: RouteShorthandOptions];
+export type MethodDecoratorParams = [
+    path?: string | RouteShorthandOptions,
+    options?: RouteShorthandOptions,
+];
 
 export type Methods = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
