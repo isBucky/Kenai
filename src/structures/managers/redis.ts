@@ -131,6 +131,8 @@ export class RedisManager {
             const scan = this._redis.scanStream({ match: this.resolvePath(path) + '*' });
 
             for await (const keys of scan) {
+                if (!keys?.length) continue;
+
                 await this._redis.del(...keys).catch(() => null);
             }
 
