@@ -16,7 +16,9 @@ import type { z } from 'zod';
  */
 export function QuerySchema(schema: z.ZodTypeAny, omitUnknownKeys: boolean = false) {
     return function (target: object, key: PropertyKey, descriptor: PropertyDescriptor) {
-        if (schema._def.typeName !== 'ZodObject') throw new Error('The schema must be a ZodObject');
+        if (!['ZodObject', 'ZodIntersection', 'ZodRecord'].includes(<string>schema._def.typeName))
+            throw new Error('The schema must be a ZodObject');
+
         if (!schema || !Object.keys(schema).length) return descriptor;
 
         new ControllerManager(target.constructor).update(key, {
@@ -30,7 +32,7 @@ export function QuerySchema(schema: z.ZodTypeAny, omitUnknownKeys: boolean = fal
                     get json() {
                         return createSchema(schema).schema;
                     },
-                }
+                },
             },
         });
 
