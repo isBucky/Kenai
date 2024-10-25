@@ -1,5 +1,5 @@
 import ControllerManager from '@managers/controller.manager';
-import { InvalidateOnUpdate } from './delete';
+import { InvalidateOnUpdate } from './invalidate-on-update';
 
 /**
  * Use this decorator to save the values ​​returned by the request, thus

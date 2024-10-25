@@ -203,6 +203,19 @@ export interface ControllerOptions {
          * Cache, ensuring that the values ​​are always up to date.
          */
         invalidateOnUpdate?: boolean;
+
+        /**
+         * You can use the deleteAllKeys parameter, which is
+         * responsible for deleting all cache keys associated with a specific URL. For
+         * example, imagine you have a users route where user information is cached.
+         * When fetching a user's details, they are stored in the cache under the path
+         * `/users/{id}`. However, if you have a route that deletes all users from the
+         * database, using this parameter allows you to clear all cached values for the
+         * `/users` route, ensuring that the cache is properly refreshed.
+         * 
+         * @default false
+         */
+        deleteAllKeys?: boolean;
     };
 }
 

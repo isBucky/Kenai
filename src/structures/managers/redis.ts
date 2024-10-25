@@ -66,14 +66,14 @@ export class RedisManager {
 
         if (this.useBufferRedisData) {
             // Retrieve the buffer data from Redis
-            const buffer = await this._redis.getBuffer(this._prefix_buffer + path);
+            const buffer = await this._redis.getBuffer(this.resolvePath(path));
             if (!buffer) return; // Return undefined if buffer is not found
 
             // Decompress the buffer data
             value = zlib.inflateSync(buffer).toString();
         } else {
             // Retrieve the cached value as a string
-            const valueCached = await this._redis.get(this._prefix + path);
+            const valueCached = await this._redis.get(this.resolvePath(path));
             if (!valueCached) return; // Return undefined if value is not found
 
             value = valueCached;
@@ -105,17 +105,13 @@ export class RedisManager {
 
         if (!value) return;
 
-        if (this.useBufferRedisData) {
-            const buffer = zlib.deflateSync(JSON.stringify(value));
-
-            return await this._redis.setex(this._prefix_buffer + path, ttl, buffer);
-        } else {
-            return await this._redis.setex(
-                this._prefix + path,
-                ttl,
-                JSON.stringify(value, null, 0),
-            );
-        }
+        return await this._redis.setex(
+            this.resolvePath(path),
+            ttl,
+            this.useBufferRedisData
+                ? zlib.deflateSync(JSON.stringify(value))
+                : JSON.stringify(value, null, 0),
+        );
     }
 
     /**
@@ -125,14 +121,30 @@ export class RedisManager {
      *
      * @throws Error if Redis has not been initialized.
      */
-    public static async delete(path: string) {
+    public static async delete(path: string, deleteAllKeys: boolean = false) {
         if (!this._redis)
             throw new Error(
                 'You chose to use Redis as a cache, but did not use the Initialize function.',
             );
 
-        return await this._redis
-            .del((this.useBufferRedisData ? this._prefix_buffer : this._prefix) + path)
-            .catch(() => null);
+        if (deleteAllKeys) {
+            const scan = this._redis.scanStream({ match: this.resolvePath(path) + '*' });
+
+            for await (const keys of scan) {
+                await this._redis.del(...keys).catch(() => null);
+            }
+
+            return;
+        }
+
+        return await this._redis.del(this.resolvePath(path)).catch(() => null);
+    }
+
+    private static resolvePath(path: string) {
+        path = (this.useBufferRedisData ? this._prefix_buffer : this._prefix) + path;
+        path = path.replace(/\//g, ':');
+        path = path.replace(/:+/g, ':');
+
+        return path.replace(/^:|:$/g, '');
     }
 }

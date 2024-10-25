@@ -61,7 +61,7 @@ export class HandlerMethod {
                 console.error(
                     new Error('No Redis connection was defined to use cache on the routes'),
                 );
-            else RedisManager.delete(request.url);
+            else RedisManager.delete(request.url, options.cache?.deleteAllKeys);
         }
 
         if (request?.socket?.closed || reply?.sent) return;
