@@ -1,9 +1,10 @@
-import ControllerManager from '@managers/controller.manager';
+import { ControllerManager } from '@managers/controller.manager';
 import { resolvePath } from '@utils/resolve-path';
 import { HandlerMethod } from './handler';
 
 // Types
 import type { FastifyHandler, FastifyValidation } from '@decorators/middlewares';
+import type { _HTTPMethods } from 'fastify/types/utils';
 import type { RouteShorthandOptions } from 'fastify';
 import type { z } from 'zod';
 
@@ -17,7 +18,7 @@ import type { z } from 'zod';
  * @return A decorator function
  */
 export function createMethodDecorator(
-    method: Methods,
+    method: _HTTPMethods,
     url?: string | RouteShorthandOptions,
     fastifyRouteOptions?: RouteShorthandOptions,
 ) {
@@ -65,8 +66,6 @@ export type MethodDecoratorParams = [
     options?: RouteShorthandOptions,
 ];
 
-export type Methods = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
-
 export type Controllers = Map<PropertyKey, ControllerMetadata>;
 
 export interface ControllerMetadata {
@@ -78,7 +77,7 @@ export interface ControllerMetadata {
     /**
      * Route request method
      */
-    method: Methods;
+    method: _HTTPMethods;
 
     /**
      * Responsible function for responding to request
