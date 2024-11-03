@@ -1,4 +1,4 @@
-import ControllerManager from '@managers/controller.manager';
+import { ControllerManager } from '@managers/controller.manager';
 
 /**
  * Use to set the operation id for a controller.

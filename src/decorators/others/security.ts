@@ -1,4 +1,4 @@
-import ControllerManager from '@managers/controller.manager';
+import { ControllerManager } from '@managers/controller.manager';
 
 /**
  * This decorator is responsible for defining the securities that the route has

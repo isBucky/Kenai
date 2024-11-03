@@ -1,3 +1,3 @@
-export * from './redis';
-export * from './controller.manager';
+export * as ControllerManager from './controller.manager';
 export * from './kenai-global';
+export * from './redis';

@@ -1,4 +1,4 @@
-import ControllerManager from '@managers/controller.manager';
+import { ControllerManager } from '@managers/controller.manager';
 
 /**
  * Decorator to hide a route from the OpenAPI documentation.

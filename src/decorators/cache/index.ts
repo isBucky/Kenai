@@ -1,4 +1,4 @@
-import ControllerManager from '@managers/controller.manager';
+import { ControllerManager } from '@managers/controller.manager';
 import { InvalidateOnUpdate } from './invalidate-on-update';
 
 /**
