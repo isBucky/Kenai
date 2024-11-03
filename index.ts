@@ -7,6 +7,6 @@ export * from '@decorators/params';
 export * from '@builders/method/decorator';
 export * from '@builders/plugin';
 export * from '@builders/params';
-export * from '@managers/redis';
+export * from '@managers/index';
 
 export * from './src/decorators';
