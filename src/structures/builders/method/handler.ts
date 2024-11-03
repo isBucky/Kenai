@@ -151,7 +151,7 @@ export class HandlerMethod {
      *
      * @param args Handler parameters
      */
-    private resolveCustomParams(args: Parameters<CallbackOriginalFunction>) {
+    public resolveCustomParams(args: Parameters<CallbackOriginalFunction>) {
         const customParams = this.controller.customHandlerParams;
         if (!customParams || !customParams.length) return args;
 
