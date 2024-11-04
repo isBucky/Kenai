@@ -151,15 +151,12 @@ export class HandlerMethod {
      *
      * @param args Handler parameters
      */
-    public resolveCustomParams(args: Parameters<CallbackOriginalFunction>) {
+    public resolveCustomParams(args: Parameters<FastifyHandler>) {
         const customParams = this.controller.customHandlerParams;
         if (!customParams || !customParams.length) return args;
 
         const [request, reply] = args;
-
-        const data = this.controller.options?.fastifyRouteOptions?.['websocket']
-            ? new ObjectManager({ request: reply, reply: request })
-            : new ObjectManager({ request, reply });
+        const data = new ObjectManager({ request, reply });
 
         return <[any, any]>customParams.map((param) => data.get(param));
     }
