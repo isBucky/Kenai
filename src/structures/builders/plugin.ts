@@ -1,5 +1,3 @@
-import '@fastify/swagger';
-
 import { Middlewares } from '@decorators/middlewares';
 import { buildRouters } from './build-routers';
 import { RedisManager } from '@managers/redis';
