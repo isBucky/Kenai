@@ -23,25 +23,25 @@
         "reflect-metadata": "*"
     },
     "dependencies": {
-        "ioredis": "^5.4.1",
+        "ioredis": "^5.4.2",
         "bucky.js": "^1.2.1",
         "fastify-plugin": "^5.0.1",
         "object.mn": "^1.2.6",
-        "zod": "^3.23.8",
-        "zod-openapi": "^3.1.1"
+        "zod": "^3.24.1",
+        "zod-openapi": "^3.3.0"
     },
     "devDependencies": {
         "@types/eslint-plugin-prettier": "^3.1.3",
-        "@types/node": "^20.16.11",
+        "@types/node": "^20.17.16",
         "@typescript-eslint/eslint-plugin": "^7.18.0",
         "@typescript-eslint/parser": "^7.18.0",
-        "eslint": "^9.12.0",
+        "eslint": "^9.19.0",
         "eslint-config-prettier": "^9.1.0",
-        "eslint-plugin-prettier": "^5.2.1",
-        "fastify": "^5.0.0",
-        "prettier": "^3.3.3",
+        "eslint-plugin-prettier": "^5.2.3",
+        "fastify": "^5.2.1",
+        "prettier": "^3.4.2",
         "reflect-metadata": "^0.2.2",
         "tsc-alias": "^1.8.10",
-        "typescript": "^5.6.3"
+        "typescript": "^5.7.3"
     }
 }
