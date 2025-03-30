@@ -1,3 +1,4 @@
+import { jsonReviver } from '@utils/json-reviver';
 import { KenaiGlobal } from './kenai-global';
 
 import IoRedis, { type RedisOptions } from 'ioredis';
@@ -81,7 +82,7 @@ export class RedisManager {
 
         try {
             // Attempt to parse the retrieved value as JSON
-            return JSON.parse(value);
+            return JSON.parse(value, jsonReviver);
         } catch (error) {
             // Return the raw value if JSON parsing fails
             return value;
