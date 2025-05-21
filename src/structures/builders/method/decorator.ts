@@ -227,7 +227,7 @@ export interface ZodAndJson {
     /**
      * Zod schema
      */
-    zod: z.ZodTypeAny;
+    zod: z.ZodType;
 
     /**
      * JSON representation of the Zod schema

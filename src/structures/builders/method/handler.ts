@@ -131,7 +131,7 @@ export class HandlerMethod {
      * @param value Value to be valid
      * @returns Validated value
      */
-    public static parser(schema: z.ZodTypeAny, value: unknown): unknown {
+    public static parser(schema: z.ZodType, value: unknown): unknown {
         /**
          * Check if the global customZodParser is defined
          * and use it to validate the value if it exists

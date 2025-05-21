@@ -14,7 +14,7 @@ import type { z } from 'zod';
  *
  * @see {@link https://github.com/isBucky/Kenai?tab=readme-ov-file#returns | Documentation}
  */
-export function Returns(status: HttpCodes, schema?: z.ZodTypeAny) {
+export function Returns<Schema extends z.ZodType>(status: HttpCodes, schema?: Schema) {
     return function (target: object, key: PropertyKey, descriptor: PropertyDescriptor) {
         if (!status || status < 100 || status > 599)
             throw new Error('You did not provide a valid request status');

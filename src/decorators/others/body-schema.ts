@@ -14,7 +14,7 @@ import type { z } from 'zod';
  * 
  * @see {@link https://github.com/isBucky/Kenai?tab=readme-ov-file#bodyschema | Documentation}
  */
-export function BodySchema(schema: z.ZodTypeAny, omitUnknownKeys: boolean = true) {
+export function BodySchema<Schema extends z.ZodType>(schema: Schema, omitUnknownKeys: boolean = true) {
     return function (target: object, key: PropertyKey, descriptor: PropertyDescriptor) {
         if (!schema || !Object.keys(schema).length) return descriptor;
 

@@ -1,10 +1,8 @@
-/* eslint-disable security/detect-object-injection */
-import { KenaiGlobal } from '@managers/kenai-global';
+import { HandlerMethod } from './method/handler';
 
 // Types
 import type { FastifyValidation } from '@decorators/middlewares';
 import type { z } from 'zod';
-import { HandlerMethod } from './method/handler';
 
 /**
  * Use this function to create validations with Zod Schema
@@ -34,13 +32,13 @@ export function createValidationSchema({
     };
 }
 
-export type CustomZodParser = <T extends z.ZodTypeAny>(schema: T, data: unknown) => T['_output'];
+export type CustomZodParser = <T extends z.ZodType>(schema: T, data: unknown) => z.infer<T>;
 
 export interface CreateValidationSchemaOptions {
     /**
      * Zod Validation Schema
      */
-    schema: z.ZodTypeAny;
+    schema: z.ZodType;
 
     /**
      * Define where this Schema will be acted
