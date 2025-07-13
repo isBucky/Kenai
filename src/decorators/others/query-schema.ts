@@ -14,7 +14,7 @@ import type { z } from 'zod';
  *
  * @see {@link https://github.com/isBucky/Kenai?tab=readme-ov-file#queryschema | Documentation}
  */
-export function QuerySchema<Schema extends z.ZodType>(schema: Schema, omitUnknownKeys: boolean = false) {
+export function QuerySchema(schema: z.ZodType, omitUnknownKeys: boolean = false) {
     return function (target: object, key: PropertyKey, descriptor: PropertyDescriptor) {
         if (!['ZodObject', 'ZodIntersection', 'ZodRecord'].includes(<string>schema._def?.['typeName']))
             throw new Error('The schema must be a ZodObject');
