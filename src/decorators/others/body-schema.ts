@@ -11,7 +11,7 @@ import type { z } from 'zod';
  * @param schema The zod schema to validate the request body
  * @param omitUnknownKeys If true, the validator will remove extraneous keys from the object
  * @returns A function that accepts the target object and the key of the method being decorated
- * 
+ *
  * @see {@link https://github.com/isBucky/Kenai?tab=readme-ov-file#bodyschema | Documentation}
  */
 export function BodySchema(schema: z.ZodType, omitUnknownKeys: boolean = true) {
@@ -27,9 +27,9 @@ export function BodySchema(schema: z.ZodType, omitUnknownKeys: boolean = true) {
                     },
 
                     get json() {
-                        return createSchema(schema).schema;
+                        return createSchema(schema, { io: 'input' }).schema;
                     },
-                }
+                },
             },
         });
 

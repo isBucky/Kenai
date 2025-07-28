@@ -33,7 +33,7 @@ export function Returns(status: HttpCodes, schema?: z.ZodType) {
                                     description: 'No Response',
                                     type: 'null',
                                 };
-                            return createSchema(schema).schema;
+                            return createSchema(schema, { io: 'output' }).schema;
                         },
                     },
                 },

@@ -16,7 +16,11 @@ import type { z } from 'zod';
  */
 export function QuerySchema(schema: z.ZodType, omitUnknownKeys: boolean = false) {
     return function (target: object, key: PropertyKey, descriptor: PropertyDescriptor) {
-        if (!['ZodObject', 'ZodIntersection', 'ZodRecord'].includes(<string>schema._def?.['typeName']))
+        if (
+            !['ZodObject', 'ZodIntersection', 'ZodRecord'].includes(
+                <string>schema._def?.['typeName'],
+            )
+        )
             throw new Error('The schema must be a ZodObject');
 
         if (!schema || !Object.keys(schema).length) return descriptor;
@@ -30,7 +34,7 @@ export function QuerySchema(schema: z.ZodType, omitUnknownKeys: boolean = false)
                     },
 
                     get json() {
-                        return createSchema(schema).schema;
+                        return createSchema(schema, { io: 'input' }).schema;
                     },
                 },
             },
