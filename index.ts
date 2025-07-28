@@ -1,4 +1,3 @@
-import 'zod-openapi/extend';
 import 'reflect-metadata';
 
 export * from '@decorators/methods';
