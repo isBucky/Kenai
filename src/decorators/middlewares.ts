@@ -3,7 +3,6 @@ import { Symbols } from '@utils/index';
 
 // Types
 import type { preValidationMetaHookHandler } from 'fastify/types/hooks';
-import type { CustomZodParser } from '@builders/validation-schema';
 import type { RouteHandler } from 'fastify';
 
 /**
@@ -29,7 +28,7 @@ export function Middlewares(...middlewares: FastifyValidation[]) {
  *
  * @param parser Its function of parser
  */
-Middlewares.setCustomZodParser = function setCustomZodParser(parser: CustomZodParser) {
+Middlewares.setCustomZodParser = function setCustomZodParser(parser: any) {
     if (!global[Symbols['global']]) global[Symbols['global']] = {};
 
     return (global[Symbols['global']]['custom-zod-parser'] = parser);
