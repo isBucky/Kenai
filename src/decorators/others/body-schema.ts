@@ -12,7 +12,7 @@ import { toJSONSchema, type z } from 'zod';
  *
  * @see {@link https://github.com/isBucky/Kenai?tab=readme-ov-file#bodyschema | Documentation}
  */
-export function BodySchema(schema: z.ZodType, omitUnknownKeys: boolean = true) {
+export function BodySchema(schema: z.ZodAny, omitUnknownKeys: boolean = true) {
     return function (target: object, key: PropertyKey, descriptor: PropertyDescriptor) {
         if (!schema || !Object.keys(schema).length) return descriptor;
 

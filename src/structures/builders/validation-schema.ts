@@ -32,13 +32,13 @@ export function createValidationSchema({
     };
 }
 
-export type CustomZodParser = <T extends z.ZodType>(schema: T, data: unknown) => z.infer<T>;
+export type CustomZodParser = <T extends z.ZodAny>(schema: T, data: unknown) => z.infer<T>;
 
 export interface CreateValidationSchemaOptions {
     /**
      * Zod Validation Schema
      */
-    schema: z.ZodType;
+    schema: z.ZodAny;
 
     /**
      * Define where this Schema will be acted

@@ -11,7 +11,7 @@ import { toJSONSchema, type z } from 'zod';
  *
  * @see {@link https://github.com/isBucky/Kenai?tab=readme-ov-file#queryschema | Documentation}
  */
-export function QuerySchema(schema: z.ZodType, omitUnknownKeys: boolean = false) {
+export function QuerySchema(schema: z.ZodAny, omitUnknownKeys: boolean = false) {
     return function (target: object, key: PropertyKey, descriptor: PropertyDescriptor) {
         if (!['object', 'intersection', 'record'].includes(schema.def.type)) throw new Error('The schema must be a ZodObject');
 

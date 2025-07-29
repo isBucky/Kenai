@@ -11,7 +11,7 @@ import { toJSONSchema, type z } from 'zod';
  *
  * @see {@link https://github.com/isBucky/Kenai?tab=readme-ov-file#paramsschema | Documentation}
  */
-export function ParamsSchema(schema: z.ZodType) {
+export function ParamsSchema(schema: z.ZodAny) {
     return function (target: object, key: PropertyKey, descriptor: PropertyDescriptor) {
         if (!['object', 'intersection', 'record'].includes(schema.def.type))
             throw new Error('The schema must be a ZodObject');
