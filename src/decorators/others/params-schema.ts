@@ -1,6 +1,6 @@
 import { createValidationSchema } from '@builders/validation-schema';
 import { ControllerManager } from '@managers/controller.manager';
-import { toJSONSchema, type z } from 'zod';
+import { toJSONSchema } from 'zod';
 
 /**
  * Decorator to set the request parameter validation schema
@@ -11,7 +11,7 @@ import { toJSONSchema, type z } from 'zod';
  *
  * @see {@link https://github.com/isBucky/Kenai?tab=readme-ov-file#paramsschema | Documentation}
  */
-export function ParamsSchema(schema: z.ZodAny) {
+export function ParamsSchema(schema: any) {
     return function (target: object, key: PropertyKey, descriptor: PropertyDescriptor) {
         if (!['object', 'intersection', 'record'].includes(schema.def.type))
             throw new Error('The schema must be a ZodObject');

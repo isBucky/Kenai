@@ -1,6 +1,6 @@
 import { createValidationSchema } from '@builders/validation-schema';
 import { ControllerManager } from '@managers/controller.manager';
-import { toJSONSchema, type z } from 'zod';
+import { toJSONSchema } from 'zod';
 
 
 /**
@@ -12,7 +12,7 @@ import { toJSONSchema, type z } from 'zod';
  *
  * @see {@link https://github.com/isBucky/Kenai?tab=readme-ov-file#bodyschema | Documentation}
  */
-export function BodySchema(schema: z.ZodAny, omitUnknownKeys: boolean = true) {
+export function BodySchema(schema: any, omitUnknownKeys: boolean = true) {
     return function (target: object, key: PropertyKey, descriptor: PropertyDescriptor) {
         if (!schema || !Object.keys(schema).length) return descriptor;
 

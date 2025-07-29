@@ -6,7 +6,6 @@ import { isClass } from '@utils/is-class';
 import fastifyPlugin from 'fastify-plugin';
 
 // Types
-import type { CustomZodParser } from './validation-schema';
 import type { RedisOptions } from 'ioredis';
 import type Redis from 'ioredis';
 
@@ -62,7 +61,7 @@ export interface PluginOptions {
      * Here you can define a custom parser for validations, such as generating
      * modified messages or modified errors
      */
-    customZodParser?: CustomZodParser;
+    customZodParser?: any;
 
     /**
      * Use to define a connection with Redis to use as a cache

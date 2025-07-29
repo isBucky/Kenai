@@ -5,11 +5,9 @@ import { getMetadata } from '@utils/index';
 import ObjectManager from 'object.mn';
 
 // Types
-import type { CustomZodParser } from '@builders/validation-schema';
 import type { ControllerMetadata, Controllers } from './decorator';
 import type { FastifyHandler } from '@decorators/middlewares';
 import type { onSendHookHandler } from 'fastify';
-import type { z } from 'zod';
 
 export class HandlerMethod {
     public controller: ControllerMetadata;
@@ -131,12 +129,12 @@ export class HandlerMethod {
      * @param value Value to be valid
      * @returns Validated value
      */
-    public static parser(schema: z.ZodAny, value: unknown): unknown {
+    public static parser(schema: any, value: unknown): unknown {
         /**
          * Check if the global customZodParser is defined
          * and use it to validate the value if it exists
          */
-        const customZodParser = KenaiGlobal.get<CustomZodParser>('custom-zod-parser');
+        const customZodParser = KenaiGlobal.get<any>('custom-zod-parser');
         if (customZodParser) return customZodParser(schema, value);
 
         /**
