@@ -13,12 +13,7 @@ import { toJSONSchema, type z } from 'zod';
  */
 export function QuerySchema(schema: z.ZodType, omitUnknownKeys: boolean = false) {
     return function (target: object, key: PropertyKey, descriptor: PropertyDescriptor) {
-        if (
-            !['ZodObject', 'ZodIntersection', 'ZodRecord'].includes(
-                <string>schema.def?.['typeName'],
-            )
-        )
-            throw new Error('The schema must be a ZodObject');
+        if (!['object', 'intersection', 'record'].includes(schema.def.type)) throw new Error('The schema must be a ZodObject');
 
         if (!schema || !Object.keys(schema).length) return descriptor;
 

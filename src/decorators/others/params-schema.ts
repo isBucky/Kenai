@@ -14,7 +14,7 @@ import { toJSONSchema, type z } from 'zod';
 export function ParamsSchema(schema: z.ZodType) {
     return function (target: object, key: PropertyKey, descriptor: PropertyDescriptor) {
         if (
-            !['ZodObject', 'ZodIntersection', 'ZodRecord'].includes(
+            !['object', 'intersection', 'record'].includes(
                 <string>schema.def?.['typeName'],
             )
         )
