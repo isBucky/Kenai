@@ -1,6 +1,6 @@
 import { createValidationSchema } from '@builders/validation-schema';
 import { ControllerManager } from '@managers/controller.manager';
-import { toJSONSchema } from 'zod';
+import { createSchema } from 'zod-openapi';
 
 
 /**
@@ -25,7 +25,7 @@ export function BodySchema(schema: any, omitUnknownKeys: boolean = true) {
                     },
 
                     get json() {
-                        return toJSONSchema(schema, { io: 'input' });
+                        return createSchema(schema, { io: 'input' }).schema;
                     },
                 },
             },

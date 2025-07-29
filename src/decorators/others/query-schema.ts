@@ -1,6 +1,6 @@
 import { createValidationSchema } from '@builders/validation-schema';
 import { ControllerManager } from '@managers/controller.manager';
-import { toJSONSchema } from 'zod';
+import { createSchema } from 'zod-openapi';
 
 /**
  * Decorator to set the request querystring validation schema
@@ -26,7 +26,7 @@ export function QuerySchema(schema: any, omitUnknownKeys: boolean = false) {
                     },
 
                     get json() {
-                        return toJSONSchema(schema, { io: 'input' });
+                        return createSchema(schema, { io: 'input' }).schema;
                     },
                 },
             },

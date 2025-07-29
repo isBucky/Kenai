@@ -1,6 +1,6 @@
 import { createValidationSchema } from '@builders/validation-schema';
 import { ControllerManager } from '@managers/controller.manager';
-import { toJSONSchema } from 'zod';
+import { createSchema } from 'zod-openapi';
 
 /**
  * Decorator to set the request parameter validation schema
@@ -29,7 +29,7 @@ export function ParamsSchema(schema: any) {
                     },
 
                     get json() {
-                        return toJSONSchema(schema, { io: 'input' });
+                        return createSchema(schema, { io: 'input' }).schema;
                     },
                 },
             },
