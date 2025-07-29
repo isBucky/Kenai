@@ -1,9 +1,7 @@
 import { createValidationSchema } from '@builders/validation-schema';
 import { ControllerManager } from '@managers/controller.manager';
-import { createSchema } from 'zod-openapi';
+import { toJSONSchema, type z } from 'zod';
 
-// Types
-import type { z } from 'zod';
 
 /**
  * Decorator to set the request body validation schema
@@ -27,7 +25,7 @@ export function BodySchema(schema: z.ZodType, omitUnknownKeys: boolean = true) {
                     },
 
                     get json() {
-                        return createSchema(schema, { io: 'input' }).schema;
+                        return toJSONSchema(schema, { io: 'input' });
                     },
                 },
             },

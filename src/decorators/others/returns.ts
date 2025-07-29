@@ -1,8 +1,5 @@
 import { ControllerManager } from '@managers/controller.manager';
-import { createSchema } from 'zod-openapi';
-
-// Types
-import type { z } from 'zod';
+import { toJSONSchema, type z } from 'zod';
 
 /**
  * This decorator is responsible for declaring what a route returns,
@@ -33,7 +30,7 @@ export function Returns(status: HttpCodes, schema?: z.ZodType) {
                                     description: 'No Response',
                                     type: 'null',
                                 };
-                            return createSchema(schema, { io: 'output' }).schema;
+                            return toJSONSchema(schema, { io: 'output' });
                         },
                     },
                 },

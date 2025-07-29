@@ -1,9 +1,6 @@
 import { createValidationSchema } from '@builders/validation-schema';
 import { ControllerManager } from '@managers/controller.manager';
-import { createSchema } from 'zod-openapi';
-
-// Types
-import type { z } from 'zod';
+import { toJSONSchema, type z } from 'zod';
 
 /**
  * Decorator to set the request querystring validation schema
@@ -18,7 +15,7 @@ export function QuerySchema(schema: z.ZodType, omitUnknownKeys: boolean = false)
     return function (target: object, key: PropertyKey, descriptor: PropertyDescriptor) {
         if (
             !['ZodObject', 'ZodIntersection', 'ZodRecord'].includes(
-                <string>schema._def?.['typeName'],
+                <string>schema.def?.['typeName'],
             )
         )
             throw new Error('The schema must be a ZodObject');
@@ -34,7 +31,7 @@ export function QuerySchema(schema: z.ZodType, omitUnknownKeys: boolean = false)
                     },
 
                     get json() {
-                        return createSchema(schema, { io: 'input' }).schema;
+                        return toJSONSchema(schema, { io: 'input' });
                     },
                 },
             },
