@@ -14,6 +14,8 @@ export function ErrorResponses(errors: ErrorResponse[]) {
                 options: {
                     response: {
                         [error.status]: {
+                            isDocumentation: true,
+
                             get zod() {
                                 return error.schema;
                             },

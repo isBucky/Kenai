@@ -179,7 +179,7 @@ export interface ControllerOptions {
      * Specify the response schema for each status code
      */
     response?: {
-        [code: number]: Partial<ZodAndJson>;
+        [code: number]: ZodAndJson;
     };
 
     /**
@@ -223,6 +223,12 @@ export interface ControllerOptions {
  * and a JSON representation of the same schema.
  */
 export interface ZodAndJson {
+    /**
+     * When true, the zod schema will be considered as documentation and
+     * won't be used as a validation schema.
+     */
+    isDocumentation?: boolean;
+
     /**
      * Zod schema
      */

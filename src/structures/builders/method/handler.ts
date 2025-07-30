@@ -95,7 +95,7 @@ export class HandlerMethod {
             if (contentType && contentType.split(';')[0] == 'application/json') {
                 const responseSchema = route.options?.response?.[reply.statusCode];
 
-                if (responseSchema && responseSchema.zod) {
+                if (responseSchema && responseSchema.zod && !responseSchema.isDocumentation) {
                     // Parse the payload to a JSON object
                     const payloadParsed = JSON.parse(<string>payload || '');
 
