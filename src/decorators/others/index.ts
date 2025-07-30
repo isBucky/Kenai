@@ -1,3 +1,4 @@
+export * from './error-responses';
 export * from './body-schema';
 export * from './params-schema';
 export * from './query-schema';
