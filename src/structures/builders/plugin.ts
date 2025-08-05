@@ -8,6 +8,7 @@ import fastifyPlugin from 'fastify-plugin';
 // Types
 import type { RedisOptions } from 'ioredis';
 import type Redis from 'ioredis';
+import { RouteOptions } from 'fastify';
 
 /**
  * Plugin responsible for loading the decorator routes
@@ -56,6 +57,8 @@ export interface PluginOptions {
      * Here you can define the parameters for the class that controllers were created
      */
     controllerParameters?: any[];
+
+    handler?: (data: RouteOptions) => RouteOptions;
 
     /**
      * Here you can define a custom parser for validations, such as generating

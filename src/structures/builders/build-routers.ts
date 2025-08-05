@@ -19,6 +19,7 @@ export function buildRouters({
     fastify,
     unresolvedRoute,
     controllerParameters,
+    handler,
 }: CreateRoutersOptions) {
     // Get all routes from the main route
     const routes = Router.getData(unresolvedRoute);
@@ -26,53 +27,53 @@ export function buildRouters({
 
     for (const route of routes.values()) {
         try {
+            const data = removeUndefinedProperties({
+                ...route.options?.fastifyRouteOptions,
+
+                url: route.url,
+                method: route.method,
+
+                schema: removeUndefinedProperties({
+                    ...route.options?.fastifyRouteOptions?.schema,
+
+                    description: route.options?.description,
+                    summary: route.options?.summary,
+                    operationId: route.options?.operationId,
+                    tags: route.options?.tags,
+                    consumes: route.options?.consumes,
+                    deprecated: route.options?.deprecated,
+                    hide: route.options?.hide,
+                    produces: route.options?.produces,
+                    security: route.options?.security,
+
+                    response: makeResponse(route),
+
+                    body: route.options?.body?.json,
+                    params: route.options?.params?.json,
+                    querystring: route.options?.querystring?.json,
+                } as FastifySchema),
+
+                validatorCompiler: !route.options?.fastifyRouteOptions?.['websocket']
+                    ? () => (data) => ({ value: data })
+                    : undefined,
+
+                serializerCompiler: !route.options?.fastifyRouteOptions?.['websocket']
+                    ? () => (data) => JSON.stringify(data)
+                    : undefined,
+
+                preValidation: route.middlewares,
+
+                onSend: !route.options?.fastifyRouteOptions?.['websocket']
+                    ? HandlerMethod.onSend(route)
+                    : undefined,
+
+                handler: route.handler.bind(
+                    new route.constructorController(...(controllerParameters || [])),
+                ),
+            } as RouteOptions);
+
             // Create the route with the options informed by the user
-            fastify.route(
-                removeUndefinedProperties({
-                    ...route.options?.fastifyRouteOptions,
-
-                    url: route.url,
-                    method: route.method,
-
-                    schema: removeUndefinedProperties({
-                        ...route.options?.fastifyRouteOptions?.schema,
-
-                        description: route.options?.description,
-                        summary: route.options?.summary,
-                        operationId: route.options?.operationId,
-                        tags: route.options?.tags,
-                        consumes: route.options?.consumes,
-                        deprecated: route.options?.deprecated,
-                        hide: route.options?.hide,
-                        produces: route.options?.produces,
-                        security: route.options?.security,
-
-                        response: makeResponse(route),
-
-                        body: route.options?.body?.json,
-                        params: route.options?.params?.json,
-                        querystring: route.options?.querystring?.json,
-                    } as FastifySchema),
-
-                    validatorCompiler: !route.options?.fastifyRouteOptions?.['websocket']
-                        ? () => (data) => ({ value: data })
-                        : undefined,
-
-                    serializerCompiler: !route.options?.fastifyRouteOptions?.['websocket']
-                        ? () => (data) => JSON.stringify(data)
-                        : undefined,
-
-                    preValidation: route.middlewares,
-
-                    onSend: !route.options?.fastifyRouteOptions?.['websocket']
-                        ? HandlerMethod.onSend(route)
-                        : undefined,
-
-                    handler: route.handler.bind(
-                        new route.constructorController(...(controllerParameters || [])),
-                    ),
-                } as RouteOptions),
-            );
+            fastify.route(handler ? handler(data) : data);
         } catch (error: any) {
             // If an error occurs, add the route to the error and throw it
             error.route = route;
@@ -102,4 +103,6 @@ interface CreateRoutersOptions {
      * Parameters to be passed to the controller constructor.
      */
     controllerParameters?: PluginOptions['controllerParameters'];
+
+    handler?: PluginOptions['handler'];
 }
