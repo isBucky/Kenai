@@ -36,6 +36,7 @@ export const KenaiPlugin = fastifyPlugin(
                 fastify,
                 unresolvedRoute,
                 controllerParameters: options.controllerParameters,
+                handler: options.handler,
             });
         }
 
@@ -76,7 +77,7 @@ export interface PluginOptions {
      * if false, the data will be stored in plain text.
      *
      * @remarks Saving data in buffer in redis saves a considerable amount of memory
-     * 
+     *
      * @default false
      */
     bufferRedisData?: boolean;
