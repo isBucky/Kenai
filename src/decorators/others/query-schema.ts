@@ -3,7 +3,7 @@ import { ControllerManager } from '@managers/controller.manager';
 import { createSchema } from 'zod-openapi';
 
 // Types
-import type { $ZodType } from 'zod/v4/core';
+import type { SafeZodType } from 'types';
 
 /**
  * Decorator to set the request querystring validation schema
@@ -14,9 +14,12 @@ import type { $ZodType } from 'zod/v4/core';
  *
  * @see {@link https://github.com/isBucky/Kenai?tab=readme-ov-file#queryschema | Documentation}
  */
-export function QuerySchema(schema: $ZodType, omitUnknownKeys: boolean = false) {
+export function QuerySchema(schema: SafeZodType, omitUnknownKeys: boolean = false) {
     return function (target: object, key: PropertyKey, descriptor: PropertyDescriptor) {
-        if (!['object', 'intersection', 'record'].includes(schema._zod.def.type)) throw new Error('The schema must be a ZodObject');
+        if (!['object', 'intersection', 'record'].includes(schema.def.type))
+            throw new Error(
+                `The body schema of the route ${target.constructor.name}.${String(key)} is empty or invalid`,
+            );
 
         if (!schema || !Object.keys(schema).length) return descriptor;
 
@@ -29,7 +32,15 @@ export function QuerySchema(schema: $ZodType, omitUnknownKeys: boolean = false) 
                     },
 
                     get json() {
-                        return createSchema(schema, { io: 'input' }).schema;
+                        try {
+                            return createSchema(schema as any, { io: 'input' }).schema;
+                        } catch (error) {
+                            throw new Error(
+                                `The output of the route ${target.constructor.name}.${String(key)} ` +
+                                    `does not have a valid Zod schema, please check if the schema is correct`,
+                                { cause: error },
+                            );
+                        }
                     },
                 },
             },

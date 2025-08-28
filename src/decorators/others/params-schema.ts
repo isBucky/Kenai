@@ -3,7 +3,7 @@ import { ControllerManager } from '@managers/controller.manager';
 import { createSchema } from 'zod-openapi';
 
 // Types
-import type { $ZodType } from 'zod/v4/core';
+import type { SafeZodType } from 'types';
 
 /**
  * Decorator to set the request parameter validation schema
@@ -14,12 +14,12 @@ import type { $ZodType } from 'zod/v4/core';
  *
  * @see {@link https://github.com/isBucky/Kenai?tab=readme-ov-file#paramsschema | Documentation}
  */
-export function ParamsSchema(schema: $ZodType) {
+export function ParamsSchema(schema: SafeZodType) {
     return function (target: object, key: PropertyKey, descriptor: PropertyDescriptor) {
-        if (!['object', 'intersection', 'record'].includes(schema._zod.def.type))
+        if (!['object', 'intersection', 'record'].includes(schema.def.type))
             throw new Error('The schema must be a ZodObject');
 
-        if (!schema || !Object.keys(schema).length) return descriptor;
+        if (!schema || !Object.keys(schema).length) throw new Error(`The body schema of the route ${target.constructor.name}.${String(key)} is empty or invalid`);
 
         new ControllerManager(target.constructor).update(key, {
             middlewares: [
@@ -32,7 +32,15 @@ export function ParamsSchema(schema: $ZodType) {
                     },
 
                     get json() {
-                        return createSchema(schema, { io: 'input' }).schema;
+                        try {
+                            return createSchema(schema as any, { io: 'input' }).schema;
+                        } catch (error) {
+                            throw new Error(
+                                    `The output of the route ${target.constructor.name}.${String(key)} ` +
+                                        `does not have a valid Zod schema, please check if the schema is correct`,
+                                    { cause: error },
+                                );
+                        }
                     },
                 },
             },

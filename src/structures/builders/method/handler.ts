@@ -8,7 +8,7 @@ import ObjectManager from 'object.mn';
 import type { ControllerMetadata, Controllers } from './decorator';
 import type { FastifyHandler } from '@decorators/middlewares';
 import type { onSendHookHandler } from 'fastify';
-import type { $ZodType } from 'zod/v4/core';
+import type { SafeZodType } from 'types';
 
 export class HandlerMethod {
     public controller: ControllerMetadata;
@@ -130,7 +130,7 @@ export class HandlerMethod {
      * @param value Value to be valid
      * @returns Validated value
      */
-    public static parser(schema: $ZodType, value: unknown): unknown {
+    public static parser(schema: SafeZodType, value: unknown): unknown {
         /**
          * Check if the global customZodParser is defined
          * and use it to validate the value if it exists

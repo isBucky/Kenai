@@ -7,8 +7,8 @@ import fastifyPlugin from 'fastify-plugin';
 
 // Types
 import type { RedisOptions } from 'ioredis';
+import type { RouteOptions } from 'fastify';
 import type Redis from 'ioredis';
-import { RouteOptions } from 'fastify';
 
 /**
  * Plugin responsible for loading the decorator routes

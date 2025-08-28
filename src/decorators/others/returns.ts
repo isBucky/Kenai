@@ -2,7 +2,7 @@ import { ControllerManager } from '@managers/controller.manager';
 import { createSchema } from 'zod-openapi';
 
 // Types
-import type { $ZodType } from 'zod/v4/core';
+import type { SafeZodType } from 'types';
 
 /**
  * This decorator is responsible for declaring what a route returns,
@@ -14,7 +14,7 @@ import type { $ZodType } from 'zod/v4/core';
  *
  * @see {@link https://github.com/isBucky/Kenai?tab=readme-ov-file#returns | Documentation}
  */
-export function Returns(status: HttpCodes, schema?: $ZodType) {
+export function Returns(status: HttpCodes, schema?: SafeZodType) {
     return function (target: object, key: PropertyKey, descriptor: PropertyDescriptor) {
         if (!status || status < 100 || status > 599)
             throw new Error('You did not provide a valid request status');
@@ -24,16 +24,25 @@ export function Returns(status: HttpCodes, schema?: $ZodType) {
                 response: {
                     [status]: {
                         get zod() {
-                            return schema as any;
+                            return schema;
                         },
 
                         get json() {
-                            if (!schema)
-                                return {
-                                    description: 'No Response',
-                                    type: 'null',
-                                };
-                            return createSchema(schema, { io: 'output' }).schema;
+                            try {
+                                if (!schema)
+                                    return {
+                                        description: 'No Response',
+                                        type: 'null',
+                                    };
+
+                                return createSchema(schema as any, { io: 'output' }).schema;
+                            } catch (error: any) {
+                                throw new Error(
+                                    `The output of the route ${target.constructor.name}.${String(key)} ` +
+                                        `does not have a valid Zod schema, please check if the schema is correct`,
+                                    { cause: error },
+                                );
+                            }
                         },
                     },
                 },
