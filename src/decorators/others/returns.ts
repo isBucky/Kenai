@@ -1,6 +1,9 @@
 import { ControllerManager } from '@managers/controller.manager';
 import { createSchema } from 'zod-openapi';
 
+// Types
+import type { $ZodType } from 'zod/v4/core';
+
 /**
  * This decorator is responsible for declaring what a route returns,
  * besides declaring what is returned, it also validates the output
@@ -11,7 +14,7 @@ import { createSchema } from 'zod-openapi';
  *
  * @see {@link https://github.com/isBucky/Kenai?tab=readme-ov-file#returns | Documentation}
  */
-export function Returns(status: HttpCodes, schema?: any) {
+export function Returns(status: HttpCodes, schema?: $ZodType) {
     return function (target: object, key: PropertyKey, descriptor: PropertyDescriptor) {
         if (!status || status < 100 || status > 599)
             throw new Error('You did not provide a valid request status');
@@ -21,7 +24,7 @@ export function Returns(status: HttpCodes, schema?: any) {
                 response: {
                     [status]: {
                         get zod() {
-                            return schema;
+                            return schema as any;
                         },
 
                         get json() {

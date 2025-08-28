@@ -2,7 +2,7 @@ import { HandlerMethod } from './method/handler';
 
 // Types
 import type { FastifyValidation } from '@decorators/middlewares';
-import type { z } from 'zod';
+import type { $ZodType } from 'zod/v4/core';
 
 /**
  * Use this function to create validations with Zod Schema
@@ -36,7 +36,7 @@ export interface CreateValidationSchemaOptions {
     /**
      * Zod Validation Schema
      */
-    schema: any;
+    schema: $ZodType;
 
     /**
      * Define where this Schema will be acted

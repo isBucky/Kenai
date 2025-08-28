@@ -2,6 +2,9 @@ import { createValidationSchema } from '@builders/validation-schema';
 import { ControllerManager } from '@managers/controller.manager';
 import { createSchema } from 'zod-openapi';
 
+// Types
+import type { $ZodType } from 'zod/v4/core';
+
 /**
  * Decorator to set the request parameter validation schema
  *
@@ -11,9 +14,9 @@ import { createSchema } from 'zod-openapi';
  *
  * @see {@link https://github.com/isBucky/Kenai?tab=readme-ov-file#paramsschema | Documentation}
  */
-export function ParamsSchema(schema: any) {
+export function ParamsSchema(schema: $ZodType) {
     return function (target: object, key: PropertyKey, descriptor: PropertyDescriptor) {
-        if (!['object', 'intersection', 'record'].includes(schema.def.type))
+        if (!['object', 'intersection', 'record'].includes(schema._zod.def.type))
             throw new Error('The schema must be a ZodObject');
 
         if (!schema || !Object.keys(schema).length) return descriptor;

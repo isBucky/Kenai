@@ -6,6 +6,7 @@ import { HandlerMethod } from './handler';
 import type { FastifyHandler, FastifyValidation } from '@decorators/middlewares';
 import type { _HTTPMethods } from 'fastify/types/utils';
 import type { RouteShorthandOptions } from 'fastify';
+import type { $ZodType } from 'zod/v4/core';
 
 /**
  * Function used to create a decorator for a controller method
@@ -232,7 +233,7 @@ export interface ZodAndJson {
     /**
      * Zod schema
      */
-    zod: any;
+    zod: $ZodType;
 
     /**
      * JSON representation of the Zod schema
